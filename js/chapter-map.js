@@ -117,24 +117,24 @@ var lyr_MishigamiChapters_3 = new ol.layer.Vector({
 });
 lyr_MishigamiChapters_3.setVisible(true);
 
-// lyr_MishigamiAreas_0
+// lyr_MishigamiAreas_4
 
-var format_MishigamiAreas_0 = new ol.format.GeoJSON();
-var features_MishigamiAreas_0 = format_MishigamiAreas_0.readFeatures(json_MishigamiAreas_0, 
+var format_MishigamiAreas_4 = new ol.format.GeoJSON();
+var features_MishigamiAreas_4 = format_MishigamiAreas_4.readFeatures(json_MishigamiAreas_4, 
             {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
-var jsonSource_MishigamiAreas_0 = new ol.source.Vector({
+var jsonSource_MishigamiAreas_4 = new ol.source.Vector({
        attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
 });
-jsonSource_MishigamiAreas_0.addFeatures(features_MishigamiAreas_0);
-var lyr_MishigamiAreas_0 = new ol.layer.Vector({
+jsonSource_MishigamiAreas_4.addFeatures(features_MishigamiAreas_4);
+var lyr_MishigamiAreas_4 = new ol.layer.Vector({
     declutter: true,
-    source: jsonSource_MishigamiAreas_0, 
-    style: style_MishigamiAreas_0,
+    source: jsonSource_MishigamiAreas_4, 
+    style: style_MishigamiAreas_4,
     interactive: false,
     extent: maxExtent,
     title: 'Mishigami Lodge Areas'
 });
-lyr_MishigamiAreas_0.setVisible(true);
+lyr_MishigamiAreas_4.setVisible(true);
 
 // baseLayer
 
@@ -167,6 +167,7 @@ var kml_chapters = new ol.layer.Vector({
 
 //chapterLayer = kml_chapters;
 chapterLayer = lyr_MishigamiChapters_3;
+areaLayer = lyr_MishigamiAreas_4;
 
 //countyLayer = kml_counties;
 countyLayer = lyr_MILPCounties_1;
@@ -174,7 +175,7 @@ countyLayer = lyr_MILPCounties_1;
 schooldistLayer = lyr_MILPSchoolDistricts_0;
 districtLayer = lyr_MCCDistricts_2;
 
-var layersList = [ baseLayer, schooldistLayer, countyLayer, districtLayer, chapterLayer ];
+var layersList = [ baseLayer, schooldistLayer, countyLayer, districtLayer, chapterLayer, areaLayer ];
 
 var attribution = new ol.control.Attribution({
     collapsible: false
@@ -245,6 +246,11 @@ $j("#districtlayer").on("change", function () {
 chapterLayer.setVisible($j("#chapterlayer").is(":checked"));
 $j("#chapterlayer").on("change", function () {
     chapterLayer.setVisible($j(this).is(":checked"));
+});
+
+areaLayer.setVisible($j("#arealayer").is(":checked"));
+$j("#arealayer").on("change", function () {
+    areaLayer.setVisible($j(this).is(":checked"));
 });
 
 map.on('click', function (evt) {

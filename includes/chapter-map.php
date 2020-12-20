@@ -19,10 +19,10 @@
 
 add_shortcode( 'mish_chapter_map', 'mish_chapter_map' );
 function mish_chapter_map() {
-    global $mish_openlayer;
+    global $mish_openlayers;
     wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)));
-    wp_enqueue_style( 'mish-openlayer-css', plugins_url($mish_openlayer . '/ol.css', dirname(__FILE__)));
-    wp_enqueue_script( 'openlayer', plugins_url($mish_openlayer . '/ol.js', dirname(__FILE__)), false, false, true );
+    wp_enqueue_style( 'mish-openlayers-css', plugins_url($mish_openlayers . '/ol.css', dirname(__FILE__)));
+    wp_enqueue_script( 'openlayer', plugins_url($mish_openlayers . '/ol.js', dirname(__FILE__)), false, false, true );
     wp_enqueue_script( 'mish-map-layer-schooldists', plugins_url('map-resources/layers/MILPSchoolDistricts_0.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-layer-schooldists-style', plugins_url('map-resources/styles/MILPSchoolDistricts_0_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-schooldists' ), false, true );
     wp_enqueue_script( 'mish-map-layer-districts', plugins_url('map-resources/layers/MCCDistricts_2.js', dirname(__FILE__)), array( 'openlayer' ), false, true );

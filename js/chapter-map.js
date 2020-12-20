@@ -41,13 +41,32 @@ $j(document).ready(function(){
 // This is the bounds lock for scrolling the map
 var maxExtent = ol.proj.transformExtent([-87,41,-81.75,46], 'EPSG:4326', 'EPSG:3857')
 
+// lyr_MILPSchoolDistricts_0
+
+var format_MILPSchoolDistricts_0 = new ol.format.GeoJSON();
+var features_MILPSchoolDistricts_0 = format_MILPSchoolDistricts_0.readFeatures(json_MILPSchoolDistricts_0, 
+            {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+var jsonSource_MILPSchoolDistricts_0 = new ol.source.Vector({
+       attributions: '<nobr>&copy; <a href="https://michigan.gov/gis" target="_blank">State of Michigan</a></nobr>',
+});
+jsonSource_MILPSchoolDistricts_0.addFeatures(features_MILPSchoolDistricts_0);
+var lyr_MILPSchoolDistricts_0 = new ol.layer.Vector({
+    declutter: true,
+    source: jsonSource_MILPSchoolDistricts_0, 
+    style: style_MILPSchoolDistricts_0,
+    interactive: false,
+    extent: maxExtent,
+    title: 'MI LP School Disticts'
+});
+lyr_MILPSchoolDistricts_0.setVisible(false);
+
 // lyr_MILPCounties_1
 
 var format_MILPCounties_1 = new ol.format.GeoJSON();
 var features_MILPCounties_1 = format_MILPCounties_1.readFeatures(json_MILPCounties_1, 
             {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
 var jsonSource_MILPCounties_1 = new ol.source.Vector({
-	attributions: '&copy; <a href="https://michigan.gov/gis" target="_blank">State of Michigan</a>',
+       attributions: '<nobr>&copy; <a href="https://michigan.gov/gis" target="_blank">State of Michigan</a></nobr>',
 });
 jsonSource_MILPCounties_1.addFeatures(features_MILPCounties_1);
 var lyr_MILPCounties_1 = new ol.layer.Vector({
@@ -60,13 +79,32 @@ var lyr_MILPCounties_1 = new ol.layer.Vector({
 });
 lyr_MILPCounties_1.setVisible(true);
 
+// lyr_MCCDistricts_2
+
+var format_MCCDistricts_2 = new ol.format.GeoJSON();
+var features_MCCDistricts_2 = format_MCCDistricts_2.readFeatures(json_MCCDistricts_2, 
+            {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+var jsonSource_MCCDistricts_2 = new ol.source.Vector({
+       attributions: '<nobr>&copy; <a href="https://michiganscouting.org/" target="_blank">Michigan Crossroads Council</a></nobr>',
+});
+jsonSource_MCCDistricts_2.addFeatures(features_MCCDistricts_2);
+var lyr_MCCDistricts_2 = new ol.layer.Vector({
+    declutter: true,
+    source: jsonSource_MCCDistricts_2, 
+    style: style_MCCDistricts_2,
+    interactive: false,
+    extent: maxExtent,
+    title: 'MCC Districts'
+});
+lyr_MCCDistricts_2.setVisible(false);
+
 // lyr_MishigamiChapters_3
 
 var format_MishigamiChapters_3 = new ol.format.GeoJSON();
 var features_MishigamiChapters_3 = format_MishigamiChapters_3.readFeatures(json_MishigamiChapters_3, 
             {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
 var jsonSource_MishigamiChapters_3 = new ol.source.Vector({
-	attributions: '&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge, Order of the Arrow, BSA</a>',
+       attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
 });
 jsonSource_MishigamiChapters_3.addFeatures(features_MishigamiChapters_3);
 var lyr_MishigamiChapters_3 = new ol.layer.Vector({
@@ -114,7 +152,10 @@ chapterLayer = lyr_MishigamiChapters_3;
 //countyLayer = kml_counties;
 countyLayer = lyr_MILPCounties_1;
 
-var layersList = [ baseLayer, countyLayer, chapterLayer ];
+schooldistLayer = lyr_MILPSchoolDistricts_0;
+districtLayer = lyr_MCCDistricts_2;
+
+var layersList = [ baseLayer, schooldistLayer, countyLayer, districtLayer, chapterLayer ];
 
 var attribution = new ol.control.Attribution({
     collapsible: false
@@ -135,8 +176,10 @@ var map = new ol.Map({
 
 var displayFeatureInfo = function (pixel) {
   var features = [];
-  map.forEachFeatureAtPixel(pixel, function (feature) {
-    features.push(feature);
+  map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+    if (layer.getProperties().title == 'Mishigami Lodge Chapters') {
+      features.push(feature);
+    }
   });
   if (features.length > 0) {
     document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('Name') + '</h4><p>Loading...';
@@ -171,8 +214,16 @@ $j("#baselayer").on("change", function () {
     baseLayer.setVisible($j(this).is(":checked"));
 });
 
+$j("#schooldistlayer").on("change", function () {
+    schooldistLayer.setVisible($j(this).is(":checked"));
+});
+
 $j("#countylayer").on("change", function () {
     countyLayer.setVisible($j(this).is(":checked"));
+});
+
+$j("#districtlayer").on("change", function () {
+    districtLayer.setVisible($j(this).is(":checked"));
 });
 
 $j("#chapterlayer").on("change", function () {

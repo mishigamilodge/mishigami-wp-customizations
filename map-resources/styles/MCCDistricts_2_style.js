@@ -9,11 +9,11 @@ var style_MCCDistricts_2 = function(feature, resolution){
     var value = ""
     var labelText = "";
     size = 0;
-    var labelFont = "18px \'.SF NS Text\', sans-serif";
-    var labelFill = "#000000";
+    var labelFont = "14px \'.SF NS Text\', sans-serif";
+    var labelFill = "rgba(0,0,165,1.0)";
     var bufferColor = "";
     var bufferWidth = 0;
-    var textAlign = "left";
+    var textAlign = "center";
     var offsetX = 8;
     var offsetY = 3;
     var placement = 'point';
@@ -21,7 +21,7 @@ var style_MCCDistricts_2 = function(feature, resolution){
         labelText = String(feature.get("Name"));
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(35,35,35,1.0)', lineDash: null, lineCap: 'square', lineJoin: 'bevel', width: 3}),
+        stroke: new ol.style.Stroke({color: 'rgba(0,0,165,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),fill: new ol.style.Fill({color: 'rgba(183,72,75,0.0)'}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)

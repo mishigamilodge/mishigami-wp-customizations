@@ -23,6 +23,10 @@ function mish_chapter_map() {
     wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)));
     wp_enqueue_style( 'mish-openlayer-css', plugins_url($mish_openlayer . '/ol.css', dirname(__FILE__)));
     wp_enqueue_script( 'openlayer', plugins_url($mish_openlayer . '/ol.js', dirname(__FILE__)), false, false, true );
+    wp_enqueue_script( 'mish-map-layer-schooldists', plugins_url('map-resources/layers/MILPSchoolDistricts_0.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-layer-schooldists-style', plugins_url('map-resources/styles/MILPSchoolDistricts_0_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-schooldists' ), false, true );
+    wp_enqueue_script( 'mish-map-layer-districts', plugins_url('map-resources/layers/MCCDistricts_2.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-layer-districts-style', plugins_url('map-resources/styles/MCCDistricts_2_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-districts' ), false, true );
     wp_enqueue_script( 'mish-map-layer-counties', plugins_url('map-resources/layers/MILPCounties_1.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-layer-counties-style', plugins_url('map-resources/styles/MILPCounties_1_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-counties' ), false, true );
     wp_enqueue_script( 'mish-map-layer-chapters', plugins_url('map-resources/layers/MishigamiChapters_3.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
@@ -36,15 +40,17 @@ function mish_chapter_map() {
     ob_start();
     ?>
     <div id="mish_map"></div>
-    <div id="mish_map_info">Click on a chapter on the map to see its info here.</div>
+    <div id="mish_map_info">The map can be zoomed and scrolled. Some of the labels won't appear until you zoom in a little ways. Click on a chapter on the map to see its info here.</div>
     <div class="clear"></div>
     <div id="mish_map_layers">
 <table><thead><tr><td>Select Layers</td></tr></thead>
 <tbody><tr><td>
 <form>
-      <input type="checkbox" checked="checked" name="baselayer" id="baselayer"><label for="baselayer"> OpenStreetMap</label><br>
+      <input type="checkbox" checked="checked" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
       <input type="checkbox" checked="checked" name="countylayer" id="countylayer"><label for="countylayer"> Michigan Counties (Lower Peninsula)</label><br>
-      <input type="checkbox" checked="checked" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Chapters</label><br>
+      <input type="checkbox" name="districtlayer" id="districtlayer"><label for="districtlayer"> Michigan Crossroads Council Districts</label><br>
+      <input type="checkbox" name="schooldistlayer" id="schooldistlayer"><label for="schooldistlayer"> Michigan School Districts (Lower Peninsula)</label><br>
+      <input type="checkbox" checked="checked" name="baselayer" id="baselayer"><label for="baselayer"> OpenStreetMap</label><br>
 </form></td></tr></tbody></table>
     </div>
     <?php

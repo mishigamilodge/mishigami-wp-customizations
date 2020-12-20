@@ -9,7 +9,7 @@ var style_MishigamiAreas_4 = function(feature, resolution){
     var value = ""
     var labelText = "";
     size = 0;
-    var labelFont = "16px \'.SF NS Text\', sans-serif";
+    var labelFont = "14px \'.SF NS Text\', sans-serif";
     /* if (resolution > 1300) {
         labelFont = "6px \'.SF NS Text\', sans-serif";
     }

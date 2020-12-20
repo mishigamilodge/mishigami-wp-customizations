@@ -197,21 +197,22 @@ var map = new ol.Map({
 var displayFeatureInfo = function (pixel) {
   var features = [];
   map.forEachFeatureAtPixel(pixel, function (feature, layer) {
-    if (layer.getProperties().title == 'Mishigami Lodge Chapters') {
+    if ((layer.getProperties().title == 'Mishigami Lodge Chapters') ||
+       (layer.getProperties().title == 'Mishigami Lodge Areas')) {
       features.push(feature);
     }
   });
   if (features.length > 0) {
-    document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('Name') + '</h4><p>Loading...';
+    document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4><p>Loading...';
     $j.ajax({
       url : mish_map.ajaxurl,
       type : 'get',
       data : {
         action : 'mish_load_chapter_blurb',
-        chapter : features[0].get('Name'),
+        chapter : features[0].get('name'),
       },
       success : function( response ) {
-        document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('Name') + '</h4>' + response.content;
+        document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4>' + response.content;
       },
     });
     //document.getElementById('mish_map_info').innerHTML = 'Chapter: ' + features[0].get('Name');

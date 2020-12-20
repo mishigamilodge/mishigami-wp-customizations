@@ -26,8 +26,8 @@ var style_MishigamiChapters_3 = function(feature, resolution){
     var offsetX = 8;
     var offsetY = 3;
     var placement = 'point';
-    if (feature.get("Name") !== null) {
-        labelText = String(feature.get("Name")).replaceAll(" ","\n");
+    if (feature.get("name") !== null) {
+        labelText = String(feature.get("name")).replaceAll(" ","\n");
     }
     var style = [ new ol.style.Style({
         stroke: new ol.style.Stroke({color: 'rgba(165,0,0,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),fill: new ol.style.Fill({color: 'rgba(183,72,75,0.0)'}),

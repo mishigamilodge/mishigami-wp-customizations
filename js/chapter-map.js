@@ -38,6 +38,9 @@ var createTextStyle = function(feature, resolution, labelText, labelFont,
 
 $j(document).ready(function(){
 
+// This is the bounds lock for scrolling the map
+var maxExtent = ol.proj.transformExtent([-87,41,-81.75,46], 'EPSG:4326', 'EPSG:3857')
+
 // lyr_MILPCounties_1
 
 var format_MILPCounties_1 = new ol.format.GeoJSON();
@@ -52,9 +55,12 @@ var lyr_MILPCounties_1 = new ol.layer.Vector({
     source: jsonSource_MILPCounties_1, 
     style: style_MILPCounties_1,
     interactive: false,
+    extent: maxExtent,
     title: 'MI LP Counties'
 });
 lyr_MILPCounties_1.setVisible(true);
+
+// lyr_MishigamiChapters_3
 
 var format_MishigamiChapters_3 = new ol.format.GeoJSON();
 var features_MishigamiChapters_3 = format_MishigamiChapters_3.readFeatures(json_MishigamiChapters_3, 
@@ -68,18 +74,24 @@ var lyr_MishigamiChapters_3 = new ol.layer.Vector({
     source: jsonSource_MishigamiChapters_3, 
     style: style_MishigamiChapters_3,
     interactive: false,
+    extent: maxExtent,
     title: 'Mishigami Lodge Chapters'
 });
 lyr_MishigamiChapters_3.setVisible(true);
+
+// baseLayer
 
 var baseLayer = new ol.layer.Tile({
     //source: new ol.source.OSM()
     source: new ol.source.OSM({
         url: 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
         //url: 'https://tile.openstreetmap.be/osmbe/{z}/{x}/{y}.png',
+        extent: maxExtent,
     })
 });
 baseLayer.setVisible(true);
+
+// kml_chapters (attempt at kml version)
 
 var kml_chapters = new ol.layer.Vector({
     declutter: true,
@@ -88,7 +100,8 @@ var kml_chapters = new ol.layer.Vector({
         format: new ol.format.KML({
             extractStyles: true,
             extractAttributes: true,
-	}),
+           }),
+        extent: maxExtent,
     }),
     //style: style_MishigamiChapters_3,
     interactive: false,
@@ -113,8 +126,10 @@ var map = new ol.Map({
   target: 'mish_map',
   view: new ol.View({
     center: ol.proj.fromLonLat([-84.8037517,43.7816099]),
+    extent: maxExtent,
+    minZoom: 6.75,
     maxZoom: 18,
-    zoom: 6.75
+    zoom: 6.75,
   })
 });
 

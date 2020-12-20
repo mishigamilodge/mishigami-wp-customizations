@@ -202,6 +202,36 @@ var displayFeatureInfo = function (pixel) {
   }
 };
 
+// set immediately to restore state on page reload, then catch any time it changes.
+baseLayer.setVisible($j("#baselayer").is(":checked"));
+$j("#baselayer").on("change", function () {
+    baseLayer.setVisible($j(this).is(":checked"));
+});
+
+schooldistLayer.setVisible($j("#schooldistlayer").is(":checked"));
+$j("#schooldistlayer").on("change", function () {
+    schooldistLayer.setVisible($j(this).is(":checked"));
+});
+
+countyLayer.setVisible($j("#countylayer").is(":checked"));
+$j("#countylayer").on("change", function () {
+    countyLayer.setVisible($j(this).is(":checked"));
+});
+
+districtLayer.setVisible($j("#districtlayer").is(":checked"));
+$j("#districtlayer").on("change", function () {
+    districtLayer.setVisible($j(this).is(":checked"));
+});
+
+chapterLayer.setVisible($j("#chapterlayer").is(":checked"));
+$j("#chapterlayer").on("change", function () {
+    chapterLayer.setVisible($j(this).is(":checked"));
+});
+
+map.on('click', function (evt) {
+  displayFeatureInfo(evt.pixel);
+});
+
 /*map.on('pointermove', function (evt) {
   if (evt.dragging) {
     return;
@@ -210,28 +240,5 @@ var displayFeatureInfo = function (pixel) {
   displayFeatureInfo(pixel);
 });
 */
-$j("#baselayer").on("change", function () {
-    baseLayer.setVisible($j(this).is(":checked"));
-});
-
-$j("#schooldistlayer").on("change", function () {
-    schooldistLayer.setVisible($j(this).is(":checked"));
-});
-
-$j("#countylayer").on("change", function () {
-    countyLayer.setVisible($j(this).is(":checked"));
-});
-
-$j("#districtlayer").on("change", function () {
-    districtLayer.setVisible($j(this).is(":checked"));
-});
-
-$j("#chapterlayer").on("change", function () {
-    chapterLayer.setVisible($j(this).is(":checked"));
-});
-
-map.on('click', function (evt) {
-  displayFeatureInfo(evt.pixel);
-});
 
 });

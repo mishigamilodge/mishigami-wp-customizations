@@ -117,6 +117,25 @@ var lyr_MishigamiChapters_3 = new ol.layer.Vector({
 });
 lyr_MishigamiChapters_3.setVisible(true);
 
+// lyr_MishigamiAreas_0
+
+var format_MishigamiAreas_0 = new ol.format.GeoJSON();
+var features_MishigamiAreas_0 = format_MishigamiAreas_0.readFeatures(json_MishigamiAreas_0, 
+            {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+var jsonSource_MishigamiAreas_0 = new ol.source.Vector({
+       attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
+});
+jsonSource_MishigamiAreas_0.addFeatures(features_MishigamiAreas_0);
+var lyr_MishigamiAreas_0 = new ol.layer.Vector({
+    declutter: true,
+    source: jsonSource_MishigamiAreas_0, 
+    style: style_MishigamiAreas_0,
+    interactive: false,
+    extent: maxExtent,
+    title: 'Mishigami Lodge Areas'
+});
+lyr_MishigamiAreas_0.setVisible(true);
+
 // baseLayer
 
 var baseLayer = new ol.layer.Tile({

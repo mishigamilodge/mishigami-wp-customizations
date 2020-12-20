@@ -9,11 +9,21 @@ var style_MILPCounties_1 = function(feature, resolution){
     var value = ""
     var labelText = "";
     size = 0;
-    var labelFont = "12px \'.SF NS Text\', sans-serif";
+    var labelFont = "18px \'.SF NS Text\', sans-serif";
+    if (resolution > 1300) {
+        labelFont = "6px \'.SF NS Text\', sans-serif";
+    }
+    else if (resolution > 400) {
+        labelFont = "10px \'.SF NS Text\', sans-serif";
+    }
+    else if (resolution > 350) {
+        labelFont = "14px \'.SF NS Text\', sans-serif";
+    }
+
     var labelFill = "#999999";
     var bufferColor = "";
     var bufferWidth = 0;
-    var textAlign = "left";
+    var textAlign = "center";
     var offsetX = 8;
     var offsetY = 3;
     var placement = 'point';

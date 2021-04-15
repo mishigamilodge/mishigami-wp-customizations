@@ -12,6 +12,25 @@
     max-widh: 350px;
     overflow-x: scroll;
 }
+#mish_map_buttons {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+#mish_map_buttons ul {
+    list-style: none;
+}
+#mish_map_buttons button {
+    font-size: xx-small;
+    width: 10em;
+    padding: 1px;
+}
+#mish_map_layers {
+    position: absolute;
+    right: 5px;
+    top: 35px;
+    display: none;
+}
 #mish_map_layers table {
     width: auto;
     border: 1px solid black;
@@ -23,6 +42,7 @@
     padding-left: 0.5em;
 }
 #mish_map_layers table tbody tr td {
+    background-color: rgba(255,255,255,0.5);
     border: 1px solid black;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -30,6 +50,6 @@
 .clear {
     clear: both;
 }
-.map_attribution {
+.ol-attribution {
     font-size: x-small;
 }

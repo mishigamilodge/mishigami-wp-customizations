@@ -23,16 +23,11 @@ function mish_chapter_map() {
     wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)));
     wp_enqueue_style( 'mish-openlayers-css', plugins_url($mish_openlayers . '/ol.css', dirname(__FILE__)));
     wp_enqueue_script( 'openlayer', plugins_url($mish_openlayers . '/ol.js', dirname(__FILE__)), false, false, true );
-    wp_enqueue_script( 'mish-map-layer-schooldists', plugins_url('map-resources/layers/MILPSchoolDistricts_0.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-schooldists-style', plugins_url('map-resources/styles/MILPSchoolDistricts_0_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-schooldists' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-districts', plugins_url('map-resources/layers/MCCDistricts_2.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-districts-style', plugins_url('map-resources/styles/MCCDistricts_2_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-districts' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-counties', plugins_url('map-resources/layers/MILPCounties_1.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-counties-style', plugins_url('map-resources/styles/MILPCounties_1_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-counties' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-chapters', plugins_url('map-resources/layers/MishigamiChapters_3.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-chapters-style', plugins_url('map-resources/styles/MishigamiChapters_3_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-chapters', 'mish-map-layer-counties' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-areas', plugins_url('map-resources/layers/MishigamiAreas_4.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-layer-areas-style', plugins_url('map-resources/styles/MishigamiAreas_4_style.js', dirname(__FILE__)), array( 'openlayer', 'mish-map-layer-areas', 'mish-map-layer-counties' ), false, true );
+    wp_enqueue_script( 'mish-map-schooldists-style', plugins_url('map-resources/styles/MILPSchoolDistricts_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-districts-style', plugins_url('map-resources/styles/MCCDistricts_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-counties-style', plugins_url('map-resources/styles/MILPCounties_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-chapters-style', plugins_url('map-resources/styles/MishigamiChapters_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-areas-style', plugins_url('map-resources/styles/MishigamiAreas_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-js', plugins_url('js/chapter-map.js', dirname(__FILE__)), array( 'openlayer', 'jquery' ), false, true );
     wp_localize_script( 'mish-map-js', 'mish_map', array(
         'layersdir' => plugins_url('map-resources/layers/', dirname(__FILE__)),
@@ -48,13 +43,19 @@ function mish_chapter_map() {
 <table><thead><tr><td>Select Layers</td></tr></thead>
 <tbody><tr><td>
 <form>
-      <input type="checkbox" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Areas</label><br>
-      <input type="checkbox" checked="checked" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
+      <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Areas</label><br>
+      <input type="checkbox" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
       <input type="checkbox" name="districtlayer" id="districtlayer"><label for="districtlayer"> Michigan Crossroads Council Districts</label><br>
       <input type="checkbox" checked="checked" name="countylayer" id="countylayer"><label for="countylayer"> Michigan Counties (Lower Peninsula)</label><br>
       <input type="checkbox" name="schooldistlayer" id="schooldistlayer"><label for="schooldistlayer"> Michigan School Districts (Lower Peninsula)</label><br>
       <input type="checkbox" checked="checked" name="baselayer" id="baselayer"><label for="baselayer"> OpenStreetMap</label><br>
 </form></td></tr></tbody></table>
+    </div>
+    <div id="mish_map_buttons">
+    <ul>
+      <li><button id="mish_map_reset_map">Reset Map</button></li>
+      <li><button id="mish_map_show_layers">Layer Picker</button></li>
+    </ul>
     </div>
     <?php
     return ob_get_clean();

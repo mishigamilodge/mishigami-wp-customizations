@@ -37,7 +37,7 @@ function mish_chapter_map() {
     ob_start();
     ?>
     <div id="mish_map"></div>
-    <div id="mish_map_info">The map can be zoomed and scrolled. Some of the labels won't appear until you zoom in a little ways. Click on a chapter on the map to see its info here.</div>
+    <div id="mish_map_info">The map can be zoomed and scrolled. Some of the labels won't appear until you zoom in a little ways. Click on an area to zoom in to the chapters in that area and show info about that area. Click on a chapter to see its info.</div>
     <div class="clear"></div>
     <div id="mish_map_layers">
 <table><thead><tr><td>Select Layers</td></tr></thead>

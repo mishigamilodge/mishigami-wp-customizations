@@ -254,7 +254,7 @@ var displayFeatureInfo = function (pixel) {
     }
     map.getView().fit(features[0].getGeometry(),{
         size: map.getSize(),
-        padding: [10,10,10,10],
+        padding: [10,10,25,10],
         duration: 500
     });
     //features[0].setStyle(new ol.style.Style({}));

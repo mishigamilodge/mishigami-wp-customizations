@@ -199,6 +199,7 @@ $j('#mish_map_reset_map').on("click", function() {
     layer_MishigamiAreas.setVisible(true);
     $j("#chapterlayer").prop('checked',false);
     $j("#arealayer").prop('checked',true);
+    $j("#mish_map_info").html($j("#mish_map_info_default").html());
 
     map.getView().fit(maxExtent,{
         size: map.getSize(),
@@ -318,6 +319,8 @@ $j("#arealayer").on("change", function () {
 map.on('click', function (evt) {
   displayFeatureInfo(evt.pixel);
 });
+
+$j("#mish_map_info").html($j("#mish_map_info_default").html());
 
 /*map.on('pointermove', function (evt) {
   if (evt.dragging) {

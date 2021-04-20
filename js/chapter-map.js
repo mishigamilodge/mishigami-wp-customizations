@@ -235,9 +235,11 @@ function setAreaVisible(area) {
     }
 }
 
+// This function is run when the map is clicked
 var displayFeatureInfo = function (pixel) {
   var features = [];
   var layers = [];
+  // find out what got clicked and save a copy of it if it was something we care about
   map.forEachFeatureAtPixel(pixel, function (feature, layer) {
     if ((layer.getProperties().title == 'Mishigami Lodge Chapters') ||
        (layer.getProperties().title == 'Mishigami Lodge Areas')) {
@@ -245,21 +247,10 @@ var displayFeatureInfo = function (pixel) {
       layers.push(layer);
     }
   });
+  // if it was something we care about...
   if (features.length > 0) {
+    // load the blurb for the clicked object
     document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4><p>Loading...';
-    if (layers[0].getProperties().title == 'Mishigami Lodge Areas') {
-        setAreaVisible(features[0].get('name'));
-        layer_MishigamiAreas.setVisible(false);
-        $j("#chapterlayer").prop('checked',false);
-        $j("#arealayer").prop('checked',false);
-    }
-    map.getView().fit(features[0].getGeometry(),{
-        size: map.getSize(),
-        padding: [10,10,25,10],
-        duration: 500
-    });
-    //features[0].setStyle(new ol.style.Style({}));
-    //setTimeout(function(){ features[0].setStyle(); }, 2000);
     $j.ajax({
       url : mish_map.ajaxurl,
       type : 'get',
@@ -271,11 +262,32 @@ var displayFeatureInfo = function (pixel) {
         document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4>' + response.content;
       },
     });
-    //document.getElementById('mish_map_info').innerHTML = 'Chapter: ' + features[0].get('Name');
-    //map.getTarget().style.cursor = 'pointer';
+    // if it was an area that got clicked, open the chapter layer for that area
+    if (layers[0].getProperties().title == 'Mishigami Lodge Areas') {
+        setAreaVisible(features[0].get('name'));
+        $j("#chapterlayer").prop('checked',false);
+    }
+    // animated zoom in to the clicked feature
+    map.getView().fit(features[0].getGeometry(),{
+        size: map.getSize(),
+        padding: [10,10,25,10],
+        duration: 500
+    });
+    // if it was an area that got clicked, hide the area layer
+    if (layers[0].getProperties().title == 'Mishigami Lodge Areas') {
+        // the code above *starts* the animation but doesn't wait for it to
+        // complete, so anything we want to run after the animation completes
+        // needs to be in a setTimeout delayed long enough for the animation
+        // to run
+        setTimeout(function(){
+            layer_MishigamiAreas.setVisible(false);
+            $j("#arealayer").prop('checked',false);
+        }, 750);
+    }
+    //features[0].setStyle(new ol.style.Style({}));
+    //setTimeout(function(){ features[0].setStyle(); }, 2000);
   } else {
     document.getElementById('mish_map_info').innerHTML = '&nbsp;';
-    //map.getTarget().style.cursor = '';
   }
 };
 
@@ -322,13 +334,25 @@ map.on('click', function (evt) {
 
 $j("#mish_map_info").html($j("#mish_map_info_default").html());
 
-/*map.on('pointermove', function (evt) {
-  if (evt.dragging) {
-    return;
-  }
-  var pixel = map.getEventPixel(evt.originalEvent);
-  displayFeatureInfo(pixel);
+map.on('pointermove', function (evt) {
+    if (evt.dragging) {
+        return;
+    }
+    var pixel = map.getEventPixel(evt.originalEvent);
+    layers = [];
+    map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+        if ((layer.getProperties().title == 'Mishigami Lodge Chapters') ||
+           (layer.getProperties().title == 'Mishigami Lodge Areas')) {
+            layers.push(layer);
+        }
+    });
+    if (layers.length > 0) {
+        map.getTargetElement().style.cursor = 'pointer';
+    } else {
+        map.getTargetElement().style.cursor = '';
+    }
+
 });
-*/
+
 
 });

@@ -36,6 +36,7 @@ function mish_chapter_map() {
 
     ob_start();
     ?>
+    <div id="mish_map_loading"><table style="width: 100%; height: 100%;"><tr><td style="height: 100%; text-align: center; vertical-align: middle;">Loading...</td></tr></table></div>
     <div id="mish_map"></div>
     <div id="mish_map_info_default" style="display: none;"><p>Mishigami Lodge is divided into 4 areas of intermediate leadership between the lodge and the chapters, to help coordinate the large number of chapters we have.</p><p>You can click on one of those areas to zoom in to the chapters in that area and show info about that area. Click on a chapter to see its info.</p><p> Some of the labels may not appear until you zoom in a little. You can click the "Reset Map" button to go back to the area map.</p></div>
     <div id="mish_map_info">Map loading...</div>

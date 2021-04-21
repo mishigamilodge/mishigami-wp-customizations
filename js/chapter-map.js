@@ -81,7 +81,6 @@ var layer_MCCDistricts = new ol.layer.Vector({
     interactive: false,
     title: 'MCC Districts'
 });
-layer_MCCDistricts.setVisible(false);
 
 // layer_MishigamiChapters
 
@@ -209,7 +208,7 @@ $j('#mish_map_reset_map').on("click", function() {
     return true;
 });
 $j('#mish_map_show_layers').on("click", function() {
-    $j('#mish_map_layers').toggle();
+    $j('#mish_map_layers').slideToggle('fast');
     return true;
 });
 function setAreaVisible(area) {
@@ -312,10 +311,25 @@ $j("#districtlayer").on("change", function () {
     layer_MCCDistricts.setVisible($j(this).is(":checked"));
 });
 
-layer_NSAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-layer_NoquetAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-layer_KishahtekAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-layer_AMAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+// The following (plus the setTimeout) is a quick hack to force it to load the
+// layer data for the chapter layers. We initially tell it they're visible so
+// the map loads them when initially drawn, then set it to match the
+// checkboxes 1.5 seconds later. We hide the map with a loading widget while
+// doing this so the user doesn't have to watch the layers flicker.
+layer_NSAreaChapters.setVisible(true);
+layer_NoquetAreaChapters.setVisible(true);
+layer_KishahtekAreaChapters.setVisible(true);
+layer_AMAreaChapters.setVisible(true);
+$j('#mish_map').hide();
+$j('#mish_map_loading').show();
+setTimeout(function() {
+    layer_NSAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+    layer_NoquetAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+    layer_KishahtekAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+    layer_AMAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+    $j('#mish_map_loading').hide();
+    $j('#mish_map').show();
+}, 1500);
 $j("#chapterlayer").on("change", function () {
     layer_NSAreaChapters.setVisible($j(this).is(":checked"));
     layer_NoquetAreaChapters.setVisible($j(this).is(":checked"));

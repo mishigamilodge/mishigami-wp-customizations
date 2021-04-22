@@ -258,7 +258,11 @@ var displayFeatureInfo = function (pixel) {
         chapter : features[0].get('name'),
       },
       success : function( response ) {
-        document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4>' + response.content;
+        adminlink = '';
+        if (response.adminlink_title) {
+          adminlink = '<a href="' + response.adminlink_url + '">[' + response.adminlink_title + ']</a>';
+        }
+        document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4>' + response.content + adminlink;
       },
     });
     // if it was an area that got clicked, open the chapter layer for that area

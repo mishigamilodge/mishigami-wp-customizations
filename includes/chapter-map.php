@@ -67,15 +67,24 @@ add_action( 'wp_ajax_mish_load_chapter_blurb', 'mish_load_chapter_blurb' );
 add_action( 'wp_ajax_nopriv_mish_load_chapter_blurb', 'mish_load_chapter_blurb' ); // need this to serve non logged in users
 function mish_load_chapter_blurb() {
     $chapter = $_GET['chapter'];
+    $response = [];
     $posts = get_posts(array('title' => $chapter, 'post_type' => 'mish_chapter'));
     if (count($posts) == 0) {
-        wp_send_json(array('content' => 'No content found for this chapter.'));
-        die();
+        $response['content'] = '<p>No content found for this chapter.</p>';
+        if (current_user_can('manage_options')) {
+            $response['adminlink_title'] = 'Create Blurb';
+            $response['adminlink_url'] = site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&amp;post_title=' . $chapter;
+        }
     } else {
         $content = apply_filters( 'the_content', $posts[0]->post_content );
-        wp_send_json(array('content' => $content));
-        die();
+        $response['content'] = $content;
+        if (current_user_can('manage_options')) {
+            $response['adminlink_title'] = 'Edit Blurb';
+            $response['adminlink_url'] = site_url() . '/wp-admin/post.php?post=' . $posts[0]->ID . '&amp;action=edit';
+        }
     }
+    wp_send_json($response);
+    die();
 }
 
 # set up custom post type for the email templates

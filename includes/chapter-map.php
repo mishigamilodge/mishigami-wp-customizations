@@ -73,7 +73,7 @@ function mish_load_chapter_blurb() {
         $response['content'] = '<p>No content found for this chapter.</p>';
         if (current_user_can('manage_options')) {
             $response['adminlink_title'] = 'Create Blurb';
-            $response['adminlink_url'] = site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&amp;post_title=' . $chapter;
+            $response['adminlink_url'] = site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&amp;post_title=' . esc_attr($chapter);
         }
     } else {
         $content = apply_filters( 'the_content', $posts[0]->post_content );

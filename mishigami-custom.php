@@ -35,4 +35,6 @@ $mish_openlayers = 'openlayers-v6.4.3-dist';
 
 // All of the meat is in the includes directory, to keep it organized.
 // Just pull it all in from here.
+require_once("includes/initial-setup.php");
+require_once("includes/admin-settings.php");
 require_once("includes/chapter-map.php");

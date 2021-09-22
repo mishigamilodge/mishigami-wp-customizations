@@ -28,9 +28,11 @@ function mish_chapter_map() {
     wp_enqueue_script( 'mish-map-counties-style', plugins_url('map-resources/styles/MILPCounties_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-chapters-style', plugins_url('map-resources/styles/MishigamiChapters_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-areas-style', plugins_url('map-resources/styles/MishigamiAreas_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
+    wp_enqueue_script( 'mish-map-camps-style', plugins_url('map-resources/styles/MCCCamps_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-js', plugins_url('js/chapter-map.js', dirname(__FILE__)), array( 'openlayer', 'jquery' ), false, true );
     wp_localize_script( 'mish-map-js', 'mish_map', array(
         'layersdir' => plugins_url('map-resources/layers/', dirname(__FILE__)),
+        'imagedir' => plugins_url('img/', dirname(__FILE__)),
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
     ) );
 
@@ -48,6 +50,7 @@ function mish_chapter_map() {
       <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Areas</label><br>
       <input type="checkbox" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
       <input type="checkbox" name="districtlayer" id="districtlayer"><label for="districtlayer"> Michigan Crossroads Council Districts</label><br>
+      <input type="checkbox" name="campslayer" id="campslayer"><label for="campslayer"> Michigan Crossroads Council Camps</label><br>
       <input type="checkbox" checked="checked" name="countylayer" id="countylayer"><label for="countylayer"> Michigan Counties (Lower Peninsula)</label><br>
       <input type="checkbox" name="schooldistlayer" id="schooldistlayer"><label for="schooldistlayer"> Michigan School Districts (Lower Peninsula)</label><br>
       <input type="checkbox" checked="checked" name="baselayer" id="baselayer"><label for="baselayer"> OpenStreetMap</label><br>

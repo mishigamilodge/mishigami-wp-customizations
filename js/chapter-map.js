@@ -150,6 +150,20 @@ var layer_MishigamiAreas = new ol.layer.Vector({
     title: 'Mishigami Lodge Areas'
 });
 
+var layer_MCCCamps = new ol.layer.Vector({
+    source: new ol.source.Vector({
+        format: new ol.format.KML({
+            extractStyles: false,
+            extractAttributes: true,
+        }),
+        url: mish_map.layersdir + 'MCCCamps.kml',
+    }),
+    style: style_MCCCamps,
+    interactive: false,
+    title: 'MCC Camps'
+});
+        
+
 // baseLayer
 
 var layer_OpenStreetMap = new ol.layer.Tile({
@@ -181,7 +195,8 @@ var map = new ol.Map({
     layer_NoquetAreaChapters,
     layer_KishahtekAreaChapters,
     layer_AMAreaChapters,
-    layer_MishigamiAreas
+    layer_MishigamiAreas,
+    layer_MCCCamps
   ],
   target: 'mish_map',
   view: new ol.View({
@@ -313,6 +328,11 @@ $j("#countylayer").on("change", function () {
 layer_MCCDistricts.setVisible($j("#districtlayer").is(":checked"));
 $j("#districtlayer").on("change", function () {
     layer_MCCDistricts.setVisible($j(this).is(":checked"));
+});
+
+layer_MCCCamps.setVisible($j("#campslayer").is(":checked"));
+$j("#campslayer").on("change", function () {
+    layer_MCCCamps.setVisible($j(this).is(":checked"));
 });
 
 // The following (plus the setTimeout) is a quick hack to force it to load the

@@ -84,50 +84,11 @@ var layer_MCCDistricts = new ol.layer.Vector({
 
 // layer_MishigamiChapters
 
-var layer_NSAreaChapters = new ol.layer.Vector({
+var layer_MishigamiChapters = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'NSAreaChapters.geojson',
-        attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
-    }),
-    visible: true,
-    style: style_MishigamiChapters,
-    interactive: false,
-    title: 'Mishigami Lodge Chapters'
-});
-
-var layer_NoquetAreaChapters = new ol.layer.Vector({
-    declutter: true,
-    source: new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'NoquetAreaChapters.geojson',
-        attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
-    }),
-    visible: true,
-    style: style_MishigamiChapters,
-    interactive: false,
-    title: 'Mishigami Lodge Chapters'
-});
-
-var layer_KishahtekAreaChapters = new ol.layer.Vector({
-    declutter: true,
-    source: new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'KishahtekAreaChapters.geojson',
-        attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
-    }),
-    visible: true,
-    style: style_MishigamiChapters,
-    interactive: false,
-    title: 'Mishigami Lodge Chapters'
-});
-
-var layer_AMAreaChapters = new ol.layer.Vector({
-    declutter: true,
-    source: new ol.source.Vector({
-        format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'AMAreaChapters.geojson',
+        url: mish_map.layersdir + 'MishigamiChapters.geojson',
         attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
     }),
     visible: true,
@@ -172,12 +133,6 @@ var layer_OpenStreetMap = new ol.layer.Tile({
     })
 });
 
-// This is the bounds lock for scrolling the map
-var bbox_kishahtek = [-86.5634110714137108,41.6961255762930989,-83.1785879841581988,42.7816981728140391];
-var bbox_shohpe = [-86.5411397388651977,42.4188196118341025,-83.1906484381760976,45.8409315959475023];
-var bbox_agaming = [-85.0888199290285030,42.4214358985140976,-82.4134779482331936,44.8595598328777001];
-var bbox_noquet = [-83.7499558037006011,42.0279383906226016,-82.6378937448066040,42.9396080725121010];
-var bbox_mishigami = [-86.5634110714137108,41.6961255762930989,-82.4134779482331936,45.8409315959475023];
 var maxExtent = ol.proj.transformExtent([-87,41,-81.75,46], 'EPSG:4326', 'EPSG:3857');
 
 var map = new ol.Map({
@@ -191,10 +146,7 @@ var map = new ol.Map({
     layer_MILPSchoolDistricts,
     layer_MILPCounties,
     layer_MCCDistricts,
-    layer_NSAreaChapters,
-    layer_NoquetAreaChapters,
-    layer_KishahtekAreaChapters,
-    layer_AMAreaChapters,
+    layer_MishigamiChapters,
     layer_MishigamiAreas,
     layer_MCCCamps
   ],
@@ -207,6 +159,7 @@ var map = new ol.Map({
     zoom: 6.75,
   })
 });
+$j('#mish_map').data('map', map);
 
 $j('#mish_map_reset_map').on("click", function() {
     setAreaVisible('none');
@@ -227,25 +180,24 @@ $j('#mish_map_show_layers').on("click", function() {
     return true;
 });
 function setAreaVisible(area) {
-    if (area == 'Nataepu Shohpe') {
-        layer_NSAreaChapters.setVisible(true);
-    } else {
-        layer_NSAreaChapters.setVisible(false);
+    map = $j('#mish_map').data('map');
+    layers = map.getLayers().getArray();
+    layer = null;
+    for (i = 0; i < layers.length; i++) {
+        if (layers[i].getProperties().title == 'Mishigami Lodge Chapters') {
+            layer = layers[i];
+            break;
+        }
     }
-    if (area == 'Noquet') {
-        layer_NoquetAreaChapters.setVisible(true);
-    } else {
-        layer_NoquetAreaChapters.setVisible(false);
-    }
-    if (area == 'Kishahtek') {
-        layer_KishahtekAreaChapters.setVisible(true);
-    } else {
-        layer_KishahtekAreaChapters.setVisible(false);
-    }
-    if (area == 'Agaming Maangogwan') {
-        layer_AMAreaChapters.setVisible(true);
-    } else {
-        layer_AMAreaChapters.setVisible(false);
+    features = layer.getSource().getFeatures();
+    for (feature of features) {
+        if (feature.get("area") == area) {
+            // show it
+            feature.setStyle(null);
+        } else {
+            // hide it
+            feature.setStyle(new ol.style.Style({}));
+        }
     }
 }
 
@@ -282,6 +234,7 @@ var displayFeatureInfo = function (pixel) {
     });
     // if it was an area that got clicked, open the chapter layer for that area
     if (layers[0].getProperties().title == 'Mishigami Lodge Areas') {
+        layer_MishigamiChapters.setVisible(true);
         setAreaVisible(features[0].get('name'));
         $j("#chapterlayer").prop('checked',false);
     }
@@ -340,25 +293,16 @@ $j("#campslayer").on("change", function () {
 // the map loads them when initially drawn, then set it to match the
 // checkboxes 1.5 seconds later. We hide the map with a loading widget while
 // doing this so the user doesn't have to watch the layers flicker.
-layer_NSAreaChapters.setVisible(true);
-layer_NoquetAreaChapters.setVisible(true);
-layer_KishahtekAreaChapters.setVisible(true);
-layer_AMAreaChapters.setVisible(true);
+layer_MishigamiChapters.setVisible(true);
 $j('#mish_map').hide();
 $j('#mish_map_loading').show();
 setTimeout(function() {
-    layer_NSAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-    layer_NoquetAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-    layer_KishahtekAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
-    layer_AMAreaChapters.setVisible($j("#chapterlayer").is(":checked"));
+    layer_MishigamiChapters.setVisible($j("#chapterlayer").is(":checked"));
     $j('#mish_map_loading').hide();
     $j('#mish_map').show();
 }, 1500);
 $j("#chapterlayer").on("change", function () {
-    layer_NSAreaChapters.setVisible($j(this).is(":checked"));
-    layer_NoquetAreaChapters.setVisible($j(this).is(":checked"));
-    layer_KishahtekAreaChapters.setVisible($j(this).is(":checked"));
-    layer_AMAreaChapters.setVisible($j(this).is(":checked"));
+    layer_MishigamiChapters.setVisible($j(this).is(":checked"));
 });
 
 layer_MishigamiAreas.setVisible($j("#arealayer").is(":checked"));

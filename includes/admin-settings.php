@@ -17,11 +17,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+## BEGIN OA TOOLS MENU CODE
+
+# This code is designed to be used in any OA-related plugin. It conditionally
+# Adds an "OA Tools" top-level menu in the WP Admin if it doesn't already
+# exist. Any OA-related plugins can then add submenus to it.
+# NOTE: if you copy this to another plugin, you also need to copy the
+# referenced SVG file.
+
+if (!function_exists('oa_tools_add_menu')) {
+    add_action( 'admin_menu', 'oa_tools_add_menu', 9 );
+    function oa_tools_add_menu() {
+        $oa_tools_icon = file_get_contents("img/oa_trademark.svg", true);
+        global $menu;
+        $menu_exists = false;
+        foreach($menu as $k => $item) {
+            if ($item[2] == 'oa_tools') {
+                $menu_exists = true;
+            }
+        }
+        if (!$menu_exists) {
+            add_menu_page( "OA Tools", "OA Tools", 'none', 'oa_tools', 'oa_tools_menu', 'data:image/svg+xml;base64,' . base64_encode($oa_tools_icon), 3 );
+        }
+    }
+    function oa_tools_menu() {
+        # this is a no-op, the page can be blank. It's going to go to the first
+        # submenu anyway when it's picked.
+    }
+}
+
+## END OA TOOLS MENU CODE
+
 add_action('admin_menu', 'mish_config_menu', 9);
 function mish_config_menu() {
-    add_menu_page( "Mishigami Tools", "Mishigami Tools", 'none', 'mish_tools', 'mish_tools_page', null, 2 );
-    add_submenu_page( "mish_tools", "Units", "Units", 'manage_options', 'mish_config_units', 'mish_config_units');
-    add_submenu_page( "mish_tools", "Chapters", "Chapters", 'manage_options', 'mish_config_chapters', 'mish_config_chapters');
+    add_submenu_page( "oa_tools", "Units", "Units", 'manage_options', 'mish_config_units', 'mish_config_units');
+    add_submenu_page( "oa_tools", "Chapters", "Chapters", 'manage_options', 'mish_config_chapters', 'mish_config_chapters');
 }
 function mish_tools_page() {
     # this is a no-op, the page can be blank. It's going to go to the first
@@ -114,22 +144,24 @@ function mish_config_units() {
                         if ($columnName === "Chapter") {
                             # the data will have a name, we need the foreign key reference ID
                             $chapter_name = $cell->getValue();
+                            if (!$chapter_name) { $chapter_name = ""; } # null -> empty string
                             if (empty($chapters[$chapter_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
                                 $wpdb->insert("${dbprefix}chapters", [ 'oalm_chapter_name' => $chapter_name ], [ '%s' ]);
                                 $chapter_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ${dbprefix}chapters WHERE oalm_chapter_name = %s", $chapter_name));
-                                $chapters[$chapter_name] = [ 'oalm_chapter_name' => $chapter_name, 'id' => $chapter_id ];
+                                $chapters[$chapter_name] = (object) ["oalm_chapter_name" => $chapter_name, "id" => $chapter_id];
                             }
                             $chapter_row = $chapters[$chapter_name];
                             $value = $chapter_row->id;
                         } elseif ($columnName === "District") {
                             # the data will have a name, we need the foreign key reference ID
                             $district_name = $cell->getValue();
+                            if (!$district_name) { $district_name = ""; } # null -> empty string
                             if (empty($districts[$district_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
                                 $wpdb->insert("${dbprefix}districts", [ 'district_name' => $district_name ], [ '%s' ]);
                                 $district_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ${dbprefix}districts WHERE district_name = %s", $district_name));
-                                $districts[$district_name] = [ 'oalm_district_name' => $district_name, 'id' => $district_id ];
+                                $districts[$district_name] = (object) ["oalm_district_name" => $district_name, "id" => $district_id];
                             }
                             $district_row = $districts[$district_name];
                             $value = $district_row->id;
@@ -265,7 +297,8 @@ function mish_config_units() {
     ?>
 <div class="wrap">
 <h2>Update Unit List</h2>
-<p>There are currently <b><?php echo esc_html($unit_count) ?></b> units in the database</p>
+<p>The unit list is used for the unit selector widget on some forms on the website.</p>
+<p>There are currently <b><?php echo esc_html($unit_count) ?></b> units in the database.</p>
 </div>
 <h3>Import unit data from OALM</h3>
 <p>Export file from OALM Must use the <b>Units for export to website</b> view in the Units module.</p>
@@ -278,8 +311,31 @@ function mish_config_units() {
 
 }
 function mish_config_chapters() {
+    global $wpdb;
+    $dbprefix = $wpdb->prefix . "mish_";
+
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
     ?><div class="wrap">
     <h2>Manage Chapter List</h2>
+    <p>New chapters are automatically added when found during Unit import. Old unused chapters will need to be removed manually. Additional fields that aren't part of the import from LodgeMaster can be edited here.</p>
+    <table class="widefat striped"><thead><tr><th>OALM Name</th><th>Human Readable Name</th><th>Chief Email</th><th>Adviser Email</th><th>Actions</th></tr></thead><tbody>
+    <?php
+    $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM ${dbprefix}chapters", OBJECT_K);
+    foreach ($chapters as $chapter) {
+        ?><tr><?php
+        foreach ($chapter as $key => $value) {
+            if ($key != 'id') {
+                ?><td id="<?php echo htmlspecialchars($key . "-" . $chapters->id); ?>"><?php echo htmlspecialchars($value); ?></td><?php
+            }
+        }
+        ?><td>
+            <a href="javascript:alert('Not implemented yet.');">Edit</a>
+            <a href="javascript:alert('Not implemented yet.');">Delete</a>
+        </td></tr><?php
+    }
+    ?></tbody></table>
     </div>
     <?php
 }

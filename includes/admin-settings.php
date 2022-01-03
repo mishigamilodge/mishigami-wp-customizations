@@ -147,7 +147,12 @@ function mish_config_units() {
                             if (!$chapter_name) { $chapter_name = ""; } # null -> empty string
                             if (empty($chapters[$chapter_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
-                                $wpdb->insert("${dbprefix}chapters", [ 'oalm_chapter_name' => $chapter_name ], [ '%s' ]);
+                                // take a guess at a human-readable name by cutting stuff before a leading hyphen
+                                $human_chapter_name = preg_replace('/^.*- /', '', $chapter_name);
+                                $wpdb->insert("${dbprefix}chapters", [
+                                    'oalm_chapter_name' => $chapter_name,
+                                    'chapter_name' => $human_chapter_name
+                                ], [ '%s', '%s' ]);
                                 $chapter_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ${dbprefix}chapters WHERE oalm_chapter_name = %s", $chapter_name));
                                 $chapters[$chapter_name] = (object) ["oalm_chapter_name" => $chapter_name, "id" => $chapter_id];
                             }

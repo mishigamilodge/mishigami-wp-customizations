@@ -22,6 +22,15 @@ function mish_chapter_map() {
     global $mish_openlayers;
     wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)));
     wp_enqueue_style( 'mish-openlayers-css', plugins_url($mish_openlayers . '/ol.css', dirname(__FILE__)));
+    wp_enqueue_script( 'jquery-ui-autocomplete');
+    $wp_scripts = wp_scripts();
+    wp_enqueue_style('jquery-ui-css',
+                'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
+                false,
+                false,
+                false);
+    wp_enqueue_style( 'mish-unit-picker-css', plugins_url('css/unit-picker.css', dirname(__FILE__)));
+    wp_enqueue_script( 'mish-unit-picker', plugins_url('js/unit-picker.js', dirname(__FILE__)), array( 'jquery-ui-autocomplete' ), false, true );
     wp_enqueue_script( 'openlayer', plugins_url($mish_openlayers . '/ol.js', dirname(__FILE__)), false, false, true );
     wp_enqueue_script( 'mish-map-schooldists-style', plugins_url('map-resources/styles/MILPSchoolDistricts_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-districts-style', plugins_url('map-resources/styles/MCCDistricts_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
@@ -38,6 +47,8 @@ function mish_chapter_map() {
 
     ob_start();
     ?>
+    <p>Pick a unit to find out what chapter you're in:</p>
+    <div id="chapter_unit_picker" class="unit_picker_widget oa_units_only"></div>
     <div id="mish_map_loading"><table style="width: 100%; height: 100%;"><tr><td style="height: 100%; text-align: center; vertical-align: middle;">Loading...</td></tr></table></div>
     <div id="mish_map"></div>
     <div id="mish_map_info_default" style="display: none;"><p>Mishigami Lodge is divided into 4 areas of intermediate leadership between the lodge and the chapters, to help coordinate the large number of chapters we have.</p><p>You can click on one of those areas to zoom in to the chapters in that area and show info about that area. Click on a chapter to see its info.</p><p> Some of the labels may not appear until you zoom in a little. You can click the "Reset Map" button to go back to the area map.</p><p>You can use the Layer Picker to show things like School Districts and locations of council camps used by the OA.</div>

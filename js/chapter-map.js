@@ -164,10 +164,21 @@ $j('#mish_map').data('map', map);
 $j('#mish_map_reset_map').on("click", function() {
     setAreaVisible('none');
     layer_MishigamiAreas.setVisible(true);
+    layer_MishigamiChapters.setVisible(false);
     $j("#chapterlayer").prop('checked',false);
     $j("#arealayer").prop('checked',true);
     $j("#mish_map_info").html($j("#mish_map_info_default").html());
 
+    features = layer_MishigamiAreas.getSource().getFeatures();
+    for (feature of features) {
+        // unhide it
+        feature.setStyle(null);
+    };
+    features = layer_MishigamiChapters.getSource().getFeatures();
+    for (feature of features) {
+        // unhide it
+        feature.setStyle(null);
+    };
     map.getView().fit(maxExtent,{
         size: map.getSize(),
         padding: [10,10,10,10],
@@ -201,6 +212,81 @@ function setAreaVisible(area) {
     }
 }
 
+function chapterFromPicker(picker) {
+    console.log('chapterFromPicker: picker: %o', picker);
+    map = $j('#mish_map').data('map');
+    layers = map.getLayers().getArray();
+    chapter_layer = null;
+    area_layer = null;
+    for (i = 0; i < layers.length; i++) {
+        title = layers[i].getProperties().title;
+        if (title === 'Mishigami Lodge Chapters') {
+            chapter_layer = layers[i];
+        }
+        if (title === 'Mishigami Lodge Areas') {
+            area_layer = layers[i];
+        }
+    }
+    chapter_layer.setVisible(true);
+    area_layer.setVisible(true);
+    chapters = chapter_layer.getSource().getFeatures();
+    selected_chapter = null;
+    for (chapter of chapters) {
+        if (chapter.get("name") === picker.unit.chapter_name) {
+            // show it
+            chapter.setStyle(null);
+            selected_chapter = chapter;
+            loadBlurb(chapter);
+        } else {
+            // hide it
+            chapter.setStyle(new ol.style.Style({}));
+        }
+    }
+    areas = area_layer.getSource().getFeatures();
+    selected_area = null;
+    for (area of areas) {
+        if (area.get("name") == selected_chapter.get("area")) {
+            // show it
+            area.setStyle(null);
+            selected_area = area;
+        } else {
+            //hide it
+            area.setStyle(new ol.style.Style({}));
+        }
+    }
+    // animated zoom in to the clicked feature
+    map.getView().fit(selected_area.getGeometry(),{
+        size: map.getSize(),
+        padding: [10,10,25,10],
+        duration: 500
+    });
+}
+$j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
+
+function loadBlurb(feature) {
+    // load the blurb for the clicked object
+    document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4><p>Loading...';
+    $j.ajax({
+      url : mish_map.ajaxurl,
+      type : 'get',
+      data : {
+        action : 'mish_load_chapter_blurb',
+        chapter : feature.get('name'),
+      },
+      success : function( response ) {
+        adminlink = '';
+        if (response.adminlink_title) {
+          adminlink = '<a href="' + response.adminlink_url + '">[' + response.adminlink_title + ']</a>';
+        }
+        if (feature.get('area')) {
+            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + '<p>' + feature.get('name') + ' is part of the ' + feature.get('area') + ' Service Area</p>' + response.content + adminlink;
+        } else {
+            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + response.content + adminlink;
+        }
+      },
+    });
+}
+
 // This function is run when the map is clicked
 var displayFeatureInfo = function (pixel) {
   var features = [];
@@ -213,25 +299,9 @@ var displayFeatureInfo = function (pixel) {
       layers.push(layer);
     }
   });
+  loadBlurb(features[0]);
   // if it was something we care about...
   if (features.length > 0) {
-    // load the blurb for the clicked object
-    document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4><p>Loading...';
-    $j.ajax({
-      url : mish_map.ajaxurl,
-      type : 'get',
-      data : {
-        action : 'mish_load_chapter_blurb',
-        chapter : features[0].get('name'),
-      },
-      success : function( response ) {
-        adminlink = '';
-        if (response.adminlink_title) {
-          adminlink = '<a href="' + response.adminlink_url + '">[' + response.adminlink_title + ']</a>';
-        }
-        document.getElementById('mish_map_info').innerHTML = '<h4>' + features[0].get('name') + '</h4>' + response.content + adminlink;
-      },
-    });
     // if it was an area that got clicked, open the chapter layer for that area
     if (layers[0].getProperties().title == 'Mishigami Lodge Areas') {
         layer_MishigamiChapters.setVisible(true);
@@ -335,6 +405,7 @@ map.on('pointermove', function (evt) {
     }
 
 });
+
 
 
 });

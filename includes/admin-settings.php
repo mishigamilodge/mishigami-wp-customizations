@@ -332,7 +332,7 @@ function mish_config_chapters() {
         ?><tr><?php
         foreach ($chapter as $key => $value) {
             if ($key != 'id') {
-                ?><td id="<?php echo htmlspecialchars($key . "-" . $chapters->id); ?>"><?php echo htmlspecialchars($value); ?></td><?php
+                ?><td id="<?php echo htmlspecialchars($key . "-" . $chapter->id); ?>"><?php echo htmlspecialchars($value); ?></td><?php
             }
         }
         ?><td>

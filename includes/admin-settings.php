@@ -89,6 +89,7 @@ function mish_config_units() {
             'Charter Org.'      => 'charter_org',
             );
             $editable_columns = [
+            'chapter_id',
             'unit_city',
             'unit_state',
             'unit_county',

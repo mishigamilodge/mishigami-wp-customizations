@@ -17,6 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+add_action( 'wp_enqueue_scripts', 'mish_unit_autocomplete_loader' );
+function mish_unit_autocomplete_loader() {
+    $pageuri = $_SERVER['REQUEST_URI'];
+    if (in_array($pageuri, [
+            '/chapters/',
+            '/transfer/'
+        ])) {
+        $wp_scripts = wp_scripts();
+        wp_enqueue_script( 'jquery-ui-autocomplete');
+        wp_enqueue_style('jquery-ui-css',
+                    'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
+                    false,
+                    false,
+                    false);
+        wp_enqueue_style( 'mish-unit-picker-css', plugins_url('css/unit-picker.css', dirname(__FILE__)));
+        wp_enqueue_script( 'mish-unit-picker', plugins_url('js/unit-picker.js', dirname(__FILE__)), array( 'jquery-ui-autocomplete' ), false, true );
+        wp_localize_script( 'mish-unit-picker', 'mish', array(
+            'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        ) );
+    }
+}
+
 add_action( 'wp_ajax_mish_get_units_autocomplete', 'mish_get_units_autocomplete' );
 add_action( 'wp_ajax_nopriv_mish_get_units_autocomplete', 'mish_get_units_autocomplete' ); // need this to serve non logged in users
 function mish_get_units_autocomplete() {

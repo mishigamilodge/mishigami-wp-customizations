@@ -23,7 +23,7 @@ class OAUnitPicker {
         );
         $j("#" + id + "_unit_search").data("unitpicker", this);
         $j("#" + id + "_unit_search").autocomplete({
-            source: mish_map.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0"),
+            source: mish.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0"),
             select: function( event, ui ) {
                 let id = event.target.id;
                 let picker_id = id.replace(/_unit_search$/, "");
@@ -33,6 +33,13 @@ class OAUnitPicker {
                 $j('#' + picker_id + '_unit_picker').hide();
                 $j('#' + picker_id + '_unit_picked').show();
                 $j('#' + picker_id + '_unit_search').val("");
+                // if these input fields exist, drop the results into them
+                $j('input[name="ChapterName"]').val(ui.item.oalm_chapter_name);
+                $j('input[name="DistrictName"]').val(ui.item.district_name);
+                $j('input[name="UnitType"]').val(ui.item.unit_type);
+                $j('input[name="UnitNumber"]').val(ui.item.unit_num);
+                $j('input[name="UnitDesignator"]').val(ui.item.unit_desig);
+                // trigger any other change hooks any other scripts have registered
                 picker.change();
                 return false;
             },

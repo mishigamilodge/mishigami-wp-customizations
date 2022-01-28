@@ -75,7 +75,7 @@ function mish_load_chapter_blurb() {
     $response = [];
     $posts = get_posts(array('title' => $chapter, 'post_type' => 'mish_chapter'));
     if (count($posts) == 0) {
-        $response['content'] = '<p>No content found for this chapter.</p>';
+        $response['content'] = '<p>We hope to have more information about this chapter here soon. In the meantime, please contact your chapter chief for information. If you are the chapter chief for this chapter, please contact the lodge secretary to change the content displayed here.</p>';
         if (current_user_can('manage_options')) {
             $response['adminlink_title'] = 'Create Blurb';
             $response['adminlink_url'] = site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&amp;post_title=' . esc_attr($chapter);

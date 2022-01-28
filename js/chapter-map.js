@@ -261,7 +261,7 @@ function chapterFromPicker(picker) {
         duration: 500
     });
 }
-//$j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
+$j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
 
 function loadBlurb(feature) {
     // load the blurb for the clicked object

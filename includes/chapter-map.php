@@ -38,8 +38,8 @@ function mish_chapter_map() {
 
     ob_start();
     ?>
-    <!-- <p>Pick a unit to find out what chapter you're in:</p>
-    <div id="chapter_unit_picker" class="unit_picker_widget"></div> -->
+    <p>Pick a unit to find out what chapter you're in:</p>
+    <div id="chapter_unit_picker" class="unit_picker_widget"></div>
     <div id="mish_map_loading"><table style="width: 100%; height: 100%;"><tr><td style="height: 100%; text-align: center; vertical-align: middle;">Loading...</td></tr></table></div>
     <div id="mish_map"></div>
     <div id="mish_map_info_default" style="display: none;"><p>Mishigami Lodge is divided into 5 service areas of intermediate leadership between the lodge and the chapters, to help coordinate the large number of chapters we have.</p><p>You can click on one of those service areas to zoom in to the chapters in that service area and show info about that service area. Click on a chapter to see its info.</p><p> Some of the labels may not appear until you zoom in a little. You can click the "Reset Map" button to go back to the service area map.</p><p>You can use the Layer Picker to show things like School Districts and locations of council camps used by the OA.</div>

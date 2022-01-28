@@ -261,7 +261,7 @@ function chapterFromPicker(picker) {
         duration: 500
     });
 }
-$j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
+//$j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
 
 function loadBlurb(feature) {
     // load the blurb for the clicked object
@@ -279,7 +279,7 @@ function loadBlurb(feature) {
           adminlink = '<a href="' + response.adminlink_url + '">[' + response.adminlink_title + ']</a>';
         }
         if (feature.get('area')) {
-            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + '<p>' + feature.get('name') + ' is part of the ' + feature.get('area') + ' Service Area</p>' + response.content + adminlink;
+            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + '<p>' + feature.get('name') + ' is part of the ' + feature.get('area') + '</p>' + response.content + adminlink;
         } else {
             document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + response.content + adminlink;
         }

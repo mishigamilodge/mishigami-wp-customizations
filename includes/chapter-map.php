@@ -38,18 +38,18 @@ function mish_chapter_map() {
 
     ob_start();
     ?>
-    <p>Pick a unit to find out what chapter you're in:</p>
-    <div id="chapter_unit_picker" class="unit_picker_widget"></div>
+    <!-- <p>Pick a unit to find out what chapter you're in:</p>
+    <div id="chapter_unit_picker" class="unit_picker_widget"></div> -->
     <div id="mish_map_loading"><table style="width: 100%; height: 100%;"><tr><td style="height: 100%; text-align: center; vertical-align: middle;">Loading...</td></tr></table></div>
     <div id="mish_map"></div>
-    <div id="mish_map_info_default" style="display: none;"><p>Mishigami Lodge is divided into 4 areas of intermediate leadership between the lodge and the chapters, to help coordinate the large number of chapters we have.</p><p>You can click on one of those areas to zoom in to the chapters in that area and show info about that area. Click on a chapter to see its info.</p><p> Some of the labels may not appear until you zoom in a little. You can click the "Reset Map" button to go back to the area map.</p><p>You can use the Layer Picker to show things like School Districts and locations of council camps used by the OA.</div>
+    <div id="mish_map_info_default" style="display: none;"><p>Mishigami Lodge is divided into 5 service areas of intermediate leadership between the lodge and the chapters, to help coordinate the large number of chapters we have.</p><p>You can click on one of those service areas to zoom in to the chapters in that service area and show info about that service area. Click on a chapter to see its info.</p><p> Some of the labels may not appear until you zoom in a little. You can click the "Reset Map" button to go back to the service area map.</p><p>You can use the Layer Picker to show things like School Districts and locations of council camps used by the OA.</div>
     <div id="mish_map_info">Map loading...</div>
     <div class="clear"></div>
     <div id="mish_map_layers">
 <table><thead><tr><td>Select Layers</td></tr></thead>
 <tbody><tr><td>
 <form>
-      <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Areas</label><br>
+      <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Service Areas</label><br>
       <input type="checkbox" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
       <input type="checkbox" name="districtlayer" id="districtlayer"><label for="districtlayer"> Michigan Crossroads Council Districts</label><br>
       <input type="checkbox" name="campslayer" id="campslayer"><label for="campslayer"> Michigan Crossroads Council Camps</label><br>

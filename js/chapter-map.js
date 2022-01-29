@@ -68,6 +68,20 @@ var layer_MILPCounties = new ol.layer.Vector({
 });
 layer_MILPCounties.setVisible(true);
 
+// layer_MCCDivisions
+
+var layer_MCCDivisions = new ol.layer.Vector({
+    declutter: true,
+    source: new ol.source.Vector({
+        format: new ol.format.GeoJSON(),
+        url: mish_map.layersdir + 'MCCDivisions.geojson',
+        attributions: '<nobr>&copy; <a href="https://michiganscouting.org/" target="_blank">Michigan Crossroads Council</a></nobr>',
+    }),
+    style: style_MCCDivisions,
+    interactive: false,
+    title: 'MCC Divisions'
+});
+
 // layer_MCCDistricts
 
 var layer_MCCDistricts = new ol.layer.Vector({
@@ -123,7 +137,7 @@ var layer_MCCCamps = new ol.layer.Vector({
     interactive: false,
     title: 'MCC Camps'
 });
-        
+
 
 // baseLayer
 
@@ -146,6 +160,7 @@ var map = new ol.Map({
     layer_MILPSchoolDistricts,
     layer_MILPCounties,
     layer_MCCDistricts,
+    layer_MCCDivisions,
     layer_MishigamiChapters,
     layer_MishigamiAreas,
     layer_MCCCamps
@@ -346,6 +361,11 @@ $j("#schooldistlayer").on("change", function () {
 layer_MILPCounties.setVisible($j("#countylayer").is(":checked"));
 $j("#countylayer").on("change", function () {
     layer_MILPCounties.setVisible($j(this).is(":checked"));
+});
+
+layer_MCCDivisions.setVisible($j("#divisionlayer").is(":checked"));
+$j("#divisionlayer").on("change", function () {
+    layer_MCCDivisions.setVisible($j(this).is(":checked"));
 });
 
 layer_MCCDistricts.setVisible($j("#districtlayer").is(":checked"));

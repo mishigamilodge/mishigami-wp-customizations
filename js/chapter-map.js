@@ -3,8 +3,9 @@ var $j = jQuery.noConflict();
 // utility function used later
 var createTextStyle = function(feature, resolution, labelText, labelFont,
                                labelFill, placement, bufferColor,
-                               bufferWidth) {
-
+                               bufferWidth, offsetX, offsetY) {
+    offsetX = typeof offsetX !== "undefined" ? offsetX : 8;
+    offsetY = typeof offsetY !== "undefined" ? offsetY : 3;
     if (feature.hide || !labelText) {
         return;
     }
@@ -23,8 +24,8 @@ var createTextStyle = function(feature, resolution, labelText, labelFont,
         text: labelText,
         textBaseline: "middle",
         textAlign: "center",
-        offsetX: 8,
-        offsetY: 3,
+        offsetX: offsetX,
+        offsetY: offsetY,
         placement: placement,
         maxAngle: 0,
         fill: new ol.style.Fill({

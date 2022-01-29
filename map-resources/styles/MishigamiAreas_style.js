@@ -20,8 +20,8 @@ var style_MishigamiAreas = function(feature, resolution){
     var bufferColor = "";
     var bufferWidth = 0;
     var textAlign = "center";
-    var offsetX = 8;
-    var offsetY = 3;
+    var offsetX = 0;
+    var offsetY = 10;
     var placement = 'point';
     if (feature.get("name") !== null) {
         labelText = String(feature.get("name")).replaceAll(" ","\n");
@@ -30,7 +30,7 @@ var style_MishigamiAreas = function(feature, resolution){
         stroke: new ol.style.Stroke({color: 'rgba(0,165,0,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 2}),fill: new ol.style.Fill({color: 'rgba(183,72,75,0.0)'}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
-                              bufferWidth)
+                              bufferWidth, offsetX, offsetY)
     })];
 
     return style;

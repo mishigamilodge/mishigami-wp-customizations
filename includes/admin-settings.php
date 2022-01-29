@@ -228,6 +228,13 @@ function mish_config_units() {
             # Check for units that no longer exist
             #####################
 
+            # A list of tables that reference units
+            // If we ever add any tables that reference units, add them to this list.
+            // This only needs to be a list of tables. Since units have a multi-column
+            // reference, they will always have to be referenced the same way.
+            $unittablelist = array(
+            );
+
             # Get the list of units from the spreadsheet as an array so we can index it
             $totalRows = $row->getRowIndex();
             $sheetUnits = $objWorksheet->rangeToArray("B2:F" . $totalRows);
@@ -252,10 +259,7 @@ function mish_config_units() {
                     echo "[-] Unit to be removed: $district_name $unit_type $unit_num $unit_desig<br>";
                     echo "--> Checking for references....<br>";
                     $refcount = 0;
-                    // if we ever add any tables that reference units, add them to this list.
-                    $tablelist = array(
-                    );
-                    foreach ($tablelist as $table) {
+                    foreach ($unittablelist as $table) {
                         $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s",array($district_id, $unit_type, $unit_num, $unit_desig)));
                         if ($count > 0) {
                             echo "--> ** found $count record(s) in $table.<br>";
@@ -275,6 +279,51 @@ function mish_config_units() {
 
             #####################
             # end of unit removal code
+            #####################
+
+            #####################
+            # check for unused chapters and districts
+            #####################
+
+            # A list of tables and columns that reference chapters
+            $chapterreferences = Array(
+                ["${dbprefix}units", "chapter_id"],
+            );
+            # A list of tables and columns that reference districts
+            $districtreferences = Array(
+                ["${dbprefix}units", "district_id"],
+            );
+
+            $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name FROM ${dbprefix}chapters", ARRAY_A);
+            foreach ($chapters as $chapter) {
+                $refcount = 0;
+                foreach ($chapterreferences as $ref) {
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`" . $ref[1] . "`) FROM `" . $ref[0] . "` WHERE `" . $ref[1] . "` = %s", array($chapter['id'])));
+                    $refcount = $refcount + $matches;
+                }
+                if ($refcount == 0) {
+                    echo "## deleting unused chapter " . esc_html($chapter['oalm_chapter_name']) . "<br>";
+                    $wpdb->query($wpdb->prepare("DELETE FROM ${dbprefix}chapters WHERE id = %s", array($chapter['id'])));
+                }
+
+            }
+
+            $districts = $wpdb->get_results("SELECT id, district_name FROM ${dbprefix}districts", ARRAY_A);
+            foreach ($districts as $district) {
+                $refcount = 0;
+                foreach ($districtreferences as $ref) {
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`" . $ref[1] . "`) FROM `" . $ref[0] . "` WHERE `" . $ref[1] . "` = %s", array($district['id'])));
+                    $refcount = $refcount + $matches;
+                }
+                if ($refcount == 0) {
+                    echo "## deleting unused district " . esc_html($district['district_name']) . "<br>";
+                    $wpdb->query($wpdb->prepare("DELETE FROM ${dbprefix}districts WHERE id = %s", array($district['id'])));
+                }
+
+            }
+
+            #####################
+            # end of chapter and district removal code
             #####################
 
             $output = ob_get_clean();
@@ -325,10 +374,10 @@ function mish_config_chapters() {
     }
     ?><div class="wrap">
     <h2>Manage Chapter List</h2>
-    <p>New chapters are automatically added when found during Unit import. Old unused chapters will need to be removed manually. Additional fields that aren't part of the import from LodgeMaster can be edited here.</p>
+    <p>New chapters are automatically added when found during Unit import, and unused chapters are automatically removed. Additional fields that aren't part of the import from LodgeMaster can be edited here.</p>
     <table class="widefat striped"><thead><tr><th>OALM Name</th><th>Human Readable Name</th><th>Chief Email</th><th>Adviser Email</th><th>Actions</th></tr></thead><tbody>
     <?php
-    $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM ${dbprefix}chapters", OBJECT_K);
+    $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM ${dbprefix}chapters ORDER BY oalm_chapter_name", OBJECT_K);
     foreach ($chapters as $chapter) {
         ?><tr><?php
         foreach ($chapter as $key => $value) {
@@ -338,7 +387,6 @@ function mish_config_chapters() {
         }
         ?><td>
             <a href="javascript:alert('Not implemented yet.');">Edit</a>
-            <a href="javascript:alert('Not implemented yet.');">Delete</a>
         </td></tr><?php
     }
     ?></tbody></table>

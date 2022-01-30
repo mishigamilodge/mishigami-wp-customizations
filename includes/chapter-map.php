@@ -30,7 +30,7 @@ function mish_chapter_map() {
     wp_enqueue_script( 'mish-map-chapters-style', plugins_url('map-resources/styles/MishigamiChapters_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-areas-style', plugins_url('map-resources/styles/MishigamiAreas_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
     wp_enqueue_script( 'mish-map-camps-style', plugins_url('map-resources/styles/MCCCamps_style.js', dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-js', plugins_url('js/chapter-map.js?v=2', dirname(__FILE__)), array( 'openlayer', 'jquery' ), false, true );
+    wp_enqueue_script( 'mish-map-js', plugins_url('js/chapter-map.js?v=3', dirname(__FILE__)), array( 'openlayer', 'jquery' ), false, true );
     wp_localize_script( 'mish-map-js', 'mish_map', array(
         'layersdir' => plugins_url('map-resources/layers/', dirname(__FILE__)),
         'imagedir' => plugins_url('img/', dirname(__FILE__)),

@@ -18,7 +18,7 @@
  */
 
 global $mish_db_version;
-$mish_db_version = 1;
+$mish_db_version = 2;
 
 function mish_create_table($ddl)
 {
@@ -157,9 +157,10 @@ function mish_install()
         add_option("mish_db_version", $mish_db_version);
     }
 
-    # if ($installed_version < 2) {
-    #     # run code for updating from schema version 1 to version 2 here.
-    # }
+    if ($installed_version < 2) {
+        # run code for updating from schema version 1 to version 2 here.
+        # Nothing to do here, we added a table, and it'll automatically get picked up by the table code above.
+    }
 
     # if ($installed_version < 3) {
     #     # run code for updating from schema version 2 to version 3 here.

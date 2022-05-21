@@ -50,8 +50,8 @@ function mish_chapter_map() {
 <table><thead><tr><td>Select Layers</td></tr></thead>
 <tbody><tr><td>
 <form>
-      <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Michigami Lodge Service Areas</label><br>
-      <input type="checkbox" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Michigami Lodge Chapters</label><br>
+      <input type="checkbox" checked="checked" name="arealayer" id="arealayer"><label for="arealayer"> Mishigami Lodge Service Areas</label><br>
+      <input type="checkbox" name="chapterlayer" id="chapterlayer"><label for="chapterlayer"> Mishigami Lodge Chapters</label><br>
       <input type="checkbox" name="divisionlayer" id="divisionlayer"><label for="divisionlayer"> Michigan Crossroads Council Divisions</label><br>
       <input type="checkbox" name="districtlayer" id="districtlayer"><label for="districtlayer"> Michigan Crossroads Council Districts</label><br>
       <input type="checkbox" name="campslayer" id="campslayer"><label for="campslayer"> Michigan Crossroads Council Camps</label><br>

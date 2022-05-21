@@ -79,8 +79,8 @@ function mish_install()
   `district_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
     );";
-
     mish_create_table($sql);
+
     $sql = "CREATE TABLE `${dbprefix}units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chapter_id` int(11) NOT NULL,
@@ -99,6 +99,40 @@ function mish_install()
   CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES `${dbprefix}chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES `${dbprefix}districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     );";
+    mish_create_table($sql);
+
+    $sql = "CREATE TABLE `${dbprefix}induction_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Status` VARCHAR(20) NOT NULL,
+  `District` VARCHAR(30) NOT NULL,
+  `Chapter` VARCHAR(30) NOT NULL,
+  `Unit_Location` VARCHAR(30),
+  `Unit_Type` VARCHAR(30),
+  `Unit_Number` VARCHAR(30),
+  `Unit_Designation` VARCHAR(30),
+  `Unit_City` VARCHAR(30),
+  `Unit_State` VARCHAR(30),
+  `Unit_County` VARCHAR(30),
+  `Visit_Type` VARCHAR(30),
+  `Visit_Date` VARCHAR(30),
+  `Visit_Time` VARCHAR(30),
+  `Virtual_Visit` VARCHAR(30),
+  `Unit_Leader` VARCHAR(30),
+  `Unit_Leader_Phone` VARCHAR(30),
+  `Unit_Leader_Email` VARCHAR(30),
+  `Requester_Name` VARCHAR(30),
+  `Requester_Phone` VARCHAR(30),
+  `Requester_Email` VARCHAR(30),
+  `Requested_Dates` VARCHAR(30),
+  `Elected_Count` VARCHAR(30),
+  `Announcement_Status` VARCHAR(30),
+  `Announcement_Date` VARCHAR(30),
+  `Posted_Date` VARCHAR(30),
+  `Approved_Date` VARCHAR(30),
+  `Callout_Event` VARCHAR(30),
+  `Welcome_Event` VARCHAR(30),
+  `Decline_Reason` VARCHAR(30)
+   );";
     mish_create_table($sql);
 
     //

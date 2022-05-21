@@ -102,7 +102,7 @@ function mish_install()
     mish_create_table($sql);
 
     $sql = "CREATE TABLE `${dbprefix}induction_data` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `Status` VARCHAR(20) NOT NULL,
   `District` VARCHAR(30) NOT NULL,
   `Chapter` VARCHAR(30) NOT NULL,

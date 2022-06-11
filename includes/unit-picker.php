@@ -68,7 +68,7 @@ function mish_get_units_autocomplete() {
         FROM ${dbprefix}units AS un
         LEFT JOIN ${dbprefix}chapters AS ch ON un.chapter_id = ch.id
         LEFT JOIN ${dbprefix}districts AS di ON un.district_id = di.id
-        WHERE (CONCAT(un.unit_type, ' ', un.unit_num) LIKE %s $extrawhere)
+        WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit.desig) LIKE %s $extrawhere)
         $extrawhere2
         ORDER BY un.unit_num, un.unit_desig
     ", $replacements));

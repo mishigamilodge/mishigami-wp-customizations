@@ -39,3 +39,4 @@ require_once("includes/initial-setup.php");
 require_once("includes/admin-settings.php");
 require_once("includes/chapter-map.php");
 require_once("includes/unit-picker.php");
+require_once("includes/induction-stats.php");

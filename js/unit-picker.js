@@ -4,10 +4,12 @@ class OAUnitPicker {
     callbacks = [];
     id = '';
     oa_units_only = true;
+    include_districts = false;
     unit = null;
-    constructor(id, oa_units_only) {
+    constructor(id, oa_units_only, include_districts) {
         this.id = id;
         this.oa_units_only = oa_units_only;
+        this.include_districts = include_districts;
         this.unit = null;
         $j("#" + id).empty();
         $j("#" + id).append(
@@ -15,7 +17,7 @@ class OAUnitPicker {
             '<p style="margin-bottom: 0px;">Enter a partial or complete unit number, then choose the correct unit from the choices. If the unit is not listed, please contact the webmaster.</p>' +
             '<p style="margin-bottom: 0px;"><b>Unit:</b> <input type="text" id="' + id + '_unit_search"></p>' +
             '<p id="' + id + '_unit_search_nomatch" style="display: none; color: red;">No matches found</p>' +
-            '<p style="color: red;">Unit number has not been selected yet.  Please choose a unit from the drop-down after typing the unit number.</p>' +
+            '<p style="color: red;">Unit has not been selected yet.  Please choose a unit from the drop-down after typing the unit number. ' + (include_districts ? 'If you are a direct member of a district or the council, enter part of the district name or "council".' : '') + '</p>' +
             '</div>' +
             '<div id="' + id + '_unit_picked">' +
             '<p style="margin-top: 1em; margin-bottom: 2em;"><span style="border: 1px solid black; padding: 0.5em;"><b>Selected unit:</b> <span id="' + id + '_unit_result"></span> &nbsp; <a href="#" id="' + id + '_change_unit">(change)</a></span></p>' +
@@ -23,7 +25,7 @@ class OAUnitPicker {
         );
         $j("#" + id + "_unit_search").data("unitpicker", this);
         $j("#" + id + "_unit_search").autocomplete({
-            source: mish.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0"),
+            source: mish.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0") + '&districts=' + (this.include_districts ? "1" : "0"),
             select: function( event, ui ) {
                 let id = event.target.id;
                 let picker_id = id.replace(/_unit_search$/, "");
@@ -125,7 +127,7 @@ class OAUnitPicker {
 
 $j(document).ready(function(){
     $j('.unit_picker_widget').each(function() {
-        $j(this).data('unitpicker', new OAUnitPicker($j(this).attr("id"),$j(this).hasClass('oa_units_only')));
+        $j(this).data('unitpicker', new OAUnitPicker($j(this).attr("id"),$j(this).hasClass('oa_units_only'),$j(this).hasClass('include_districts')));
     });
 });
 

@@ -65,9 +65,9 @@ function mish_get_units_autocomplete() {
     error_log("replacements = " . print_r($replacements, true));
     $results = $wpdb->get_results($wpdb->prepare("
         SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-        FROM ${dbprefix}units AS un
-        LEFT JOIN ${dbprefix}chapters AS ch ON un.chapter_id = ch.id
-        LEFT JOIN ${dbprefix}districts AS di ON un.district_id = di.id
+        FROM {$dbprefix}units AS un
+        LEFT JOIN {$dbprefix}chapters AS ch ON un.chapter_id = ch.id
+        LEFT JOIN {$dbprefix}districts AS di ON un.district_id = di.id
         WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s $extrawhere)
         $extrawhere2
         ORDER BY un.unit_num, un.unit_desig

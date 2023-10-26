@@ -64,7 +64,7 @@ function mish_install()
     // only if it doesn't exist yet. If the columns or indexes need to
     // change it'll need update code (see below).
 
-    $sql = "CREATE TABLE `${dbprefix}chapters` (
+    $sql = "CREATE TABLE `{$dbprefix}chapters` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `oalm_chapter_name` varchar(120) CHARACTER SET utf8 NOT NULL,
   `chapter_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
@@ -74,14 +74,14 @@ function mish_install()
     );";
     mish_create_table($sql);
 
-    $sql = "CREATE TABLE `${dbprefix}districts` (
+    $sql = "CREATE TABLE `{$dbprefix}districts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `district_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
     );";
 
     mish_create_table($sql);
-    $sql = "CREATE TABLE `${dbprefix}units` (
+    $sql = "CREATE TABLE `{$dbprefix}units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chapter_id` int(11) NOT NULL,
   `district_id` int(11) NOT NULL,
@@ -96,8 +96,8 @@ function mish_install()
   UNIQUE KEY `troop_UNIQUE` (`district_id`,`unit_type`,`unit_num`,`unit_desig`),
   KEY `chapter_id_fkey_idx` (`chapter_id`),
   KEY `district_id_fkey_idx` (`district_id`),
-  CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES `${dbprefix}chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES `${dbprefix}districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES `{$dbprefix}chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES `{$dbprefix}districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     );";
     mish_create_table($sql);
 

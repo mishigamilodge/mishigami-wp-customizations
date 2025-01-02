@@ -45,7 +45,7 @@ var layer_MILPSchoolDistricts = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MILPSchoolDistricts.geojson',
+        url: mish_map.layersdir + 'MILPSchoolDistricts.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://michigan.gov/gis" target="_blank">State of Michigan</a></nobr>',
     }),
     style: style_MILPSchoolDistricts,
@@ -60,7 +60,7 @@ var layer_MILPCounties = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MILPCounties.geojson',
+        url: mish_map.layersdir + 'MILPCounties.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://michigan.gov/gis" target="_blank">State of Michigan</a></nobr>',
     }),
     style: style_MILPCounties,
@@ -75,7 +75,7 @@ var layer_MCCDivisions = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MCCDivisions.geojson',
+        url: mish_map.layersdir + 'MCCDivisions.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://michiganscouting.org/" target="_blank">Michigan Crossroads Council</a></nobr>',
     }),
     style: style_MCCDivisions,
@@ -89,7 +89,7 @@ var layer_MCCDistricts = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MCCDistricts.geojson',
+        url: mish_map.layersdir + 'MCCDistricts.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://michiganscouting.org/" target="_blank">Michigan Crossroads Council</a></nobr>',
     }),
     style: style_MCCDistricts,
@@ -103,7 +103,7 @@ var layer_MishigamiChapters = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MishigamiChapters.geojson',
+        url: mish_map.layersdir + 'MishigamiChapters.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
     }),
     visible: true,
@@ -118,7 +118,7 @@ var layer_MishigamiAreas = new ol.layer.Vector({
     declutter: true,
     source: new ol.source.Vector({
         format: new ol.format.GeoJSON(),
-        url: mish_map.layersdir + 'MishigamiAreas.geojson',
+        url: mish_map.layersdir + 'MishigamiAreas.geojson?v=' + mish_map.cachedate,
         attributions: '<nobr>&copy; <a href="https://mishigami.org/" target="_blank">Mishigami Lodge</a></nobr>',
     }),
     style: style_MishigamiAreas,

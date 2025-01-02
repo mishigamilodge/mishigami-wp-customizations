@@ -148,10 +148,11 @@ var layer_OpenStreetMap = new ol.layer.Tile({
     })
 });
 
-var maxExtent = ol.proj.transformExtent([-87,41,-81.75,46], 'EPSG:4326', 'EPSG:3857');
+var maxExtent = ol.proj.transformExtent([-95,37,-78,52], 'EPSG:4326', 'EPSG:3857');
+mish_map.extent = maxExtent;
 
 var map = new ol.Map({
-  controls: ol.control.defaults({attribution: false}).extend([
+  controls: ol.control.defaults.defaults({attribution: false}).extend([
     new ol.control.Attribution({collapsible: false}),
     new ol.control.Control({element: document.getElementById('mish_map_layers')}),
     new ol.control.Control({element: document.getElementById('mish_map_buttons')}),
@@ -168,14 +169,43 @@ var map = new ol.Map({
   ],
   target: 'mish_map',
   view: new ol.View({
-    center: ol.proj.fromLonLat([-84.8037517,43.7816099]),
-    extent: maxExtent,
-    minZoom: 6.75,
-    maxZoom: 18,
-    zoom: 6.75,
+    extent: mish_map.extent,
+    center: ol.extent.getCenter(mish_map.extent),
+    minZoom: 4,
+    maxZoom: 20,
+    zoom: 4,
   })
 });
+mish_map.map = map;
+mish_map.arealayer = layer_MishigamiAreas;
 $j('#mish_map').data('map', map);
+
+layer_MishigamiAreas.once("change", function() {
+    map = mish_map.map;
+    layer = mish_map.arealayer;
+    mish_map.extent = layer.getSource().getExtent();
+    view = new ol.View({
+        extent: mish_map.extent,
+        showFullExtent: true,
+        padding: [10,10,25,10],
+        center: ol.extent.getCenter(mish_map.extent),
+        minZoom: 4,
+        maxZoom: 20,
+        zoom: 4,
+    });
+    map.getView().fit(mish_map.extent,{
+        size: map.getSize(),
+        padding: [10,10,25,10],
+        duration: 1500,
+        callback: function() {
+            map.setView(view);
+            view.fit(mish_map.extent,{
+                size: map.getSize(),
+                padding: [10,10,25,10],
+            });
+        }
+    });
+});
 
 $j('#mish_map_reset_map').on("click", function() {
     setAreaVisible('none');
@@ -195,9 +225,9 @@ $j('#mish_map_reset_map').on("click", function() {
         // unhide it
         feature.setStyle(null);
     };
-    map.getView().fit(maxExtent,{
+    map.getView().fit(mish_map.extent,{
         size: map.getSize(),
-        padding: [10,10,10,10],
+        padding: [10,10,25,10],
         duration: 500
     });
     return true;

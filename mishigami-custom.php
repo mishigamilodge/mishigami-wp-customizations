@@ -31,7 +31,7 @@
 // version we're embedding, so set the name of the directory it's in
 // here and reference the variable from anywhere that needs it.
 global $mish_openlayers;
-$mish_openlayers = 'openlayers-v6.4.3-dist';
+$mish_openlayers = 'openlayers-v10.3.1-dist';
 
 // All of the meat is in the includes directory, to keep it organized.
 // Just pull it all in from here.

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
+  <Document id="root_doc">
     <name>MCC Camps</name>
     <Style id="icon-1765-0288D1-nodesc-normal">
       <IconStyle>
         <color>ffd18802</color>
         <scale>1</scale>
         <Icon>
-          <href>camping-icon.svg</href>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
         </Icon>
       </IconStyle>
       <LabelStyle>
@@ -22,7 +22,7 @@
         <color>ffd18802</color>
         <scale>1</scale>
         <Icon>
-          <href>camping-icon.svg</href>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
         </Icon>
       </IconStyle>
       <LabelStyle>
@@ -42,6 +42,10 @@
         <styleUrl>#icon-1765-0288D1-nodesc-highlight</styleUrl>
       </Pair>
     </StyleMap>
+    <Schema id="MCC_Camps.schema">
+      <SimpleField name="x" type="float"/>
+      <SimpleField name="y" type="float"/>
+    </Schema>
     <Placemark>
       <name>Gerber Scout Reservation</name>
       <styleUrl>#icon-1765-0288D1-nodesc</styleUrl>
@@ -84,6 +88,20 @@
       <Point>
         <coordinates>
           -84.2394316,42.2073614,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="MCC_Camps.6">
+      <name>Camp Hiawatha</name>
+    </Placemark>
+    <Placemark id="MCC_Camps.7">
+      <name>Camp Hiawatha</name>
+    </Placemark>
+    <Placemark id="MCC_Camps.8">
+      <name>Camp Hiawatha</name>
+      <Point>
+        <coordinates>
+          -86.7446543884278,46.373044288097,0
         </coordinates>
       </Point>
     </Placemark>

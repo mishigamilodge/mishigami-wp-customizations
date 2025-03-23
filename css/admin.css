@@ -1,0 +1,4 @@
+#adduser .form-field td:has(> input#email)::after, #createuser .form-field td:has(> input#email)::after {
+    content: "Authentication is locked to mishigami.org via Google WorkSpace. All users must have a mishigami.org email address or they won't be able to log in.";
+    display: block;
+}

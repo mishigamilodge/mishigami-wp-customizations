@@ -48,6 +48,11 @@ if (!function_exists('oa_tools_add_menu')) {
 
 ## END OA TOOLS MENU CODE
 
+function mish_enqueue_admin_custom_css() {
+    wp_enqueue_style( 'admin-custom', plugins_url('css/admin.css', dirname(__FILE__)));
+}
+add_action( 'admin_enqueue_scripts', 'mish_enqueue_admin_custom_css' );
+
 add_action('admin_menu', 'mish_config_menu', 9);
 function mish_config_menu() {
     add_submenu_page( "oa_tools", "Units", "Units", 'manage_options', 'mish_config_units', 'mish_config_units');

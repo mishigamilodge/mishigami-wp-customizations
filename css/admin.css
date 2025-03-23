@@ -2,3 +2,10 @@
     content: "Authentication is currently using Google WorkSpace. Users must have a mishigami.org email address or they won't be able to log in.";
     display: block;
 }
+
+#adduser .user-pass1-wrap, #createuser .user-pass1-wrap {
+    display: none;
+}
+#adduser tr:has(> * input#send_user_notification), #createuser tr:has(> * input#send_user_notification) {
+    display: none;
+}

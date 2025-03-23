@@ -48,10 +48,20 @@ if (!function_exists('oa_tools_add_menu')) {
 
 ## END OA TOOLS MENU CODE
 
+# Apply custom CSS for admin pages
 function mish_enqueue_admin_custom_css() {
     wp_enqueue_style( 'admin-custom', plugins_url('css/admin.css', dirname(__FILE__)));
 }
 add_action( 'admin_enqueue_scripts', 'mish_enqueue_admin_custom_css' );
+
+# Default "send notification to new user" to off on user creation
+function mish_uncheck_notify_register_form() {
+    echo '<script>jQuery(document).ready(function($) {
+        $("#send_user_notification").removeAttr("checked");
+    } ); </script>';
+}
+add_action( 'user_new_form', 'mish_uncheck_notify_register_form' );
+
 
 add_action('admin_menu', 'mish_config_menu', 9);
 function mish_config_menu() {

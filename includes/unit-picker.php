@@ -35,6 +35,7 @@ function mish_unit_autocomplete_loader() {
         wp_enqueue_script( 'mish-unit-picker', plugins_url('js/unit-picker.js', dirname(__FILE__)), array( 'jquery-ui-autocomplete' ), false, true );
         wp_localize_script( 'mish-unit-picker', 'mish', array(
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
+            'nonce' => wp_create_nonce( 'mish_get_units_autocomplete_nonce' ),
         ) );
     }
 }
@@ -42,14 +43,12 @@ function mish_unit_autocomplete_loader() {
 add_action( 'wp_ajax_mish_get_units_autocomplete', 'mish_get_units_autocomplete' );
 add_action( 'wp_ajax_nopriv_mish_get_units_autocomplete', 'mish_get_units_autocomplete' ); // need this to serve non logged in users
 function mish_get_units_autocomplete() {
+    check_ajax_referer( 'mish_get_units_autocomplete_nonce', 'nonce' );
     global $wpdb;
     $dbprefix = $wpdb->prefix . "mish_";
-    $term = $_GET['term'];
-    #$term = intval($term);
-    $oaonly = $_GET['oaonly'];
-    $oaonly = intval($oaonly);
-    $districts = $_GET['districts'];
-    $districts = intval($districts);
+    $term = isset( $_GET['term'] ) ? sanitize_text_field( $_GET['term'] ) : '';
+    $oaonly = isset( $_GET['oaonly'] ) ? intval( $_GET['oaonly'] ) : 0;
+    $districts = isset( $_GET['districts'] ) ? intval( $_GET['districts'] ) : 0;
     $replacements = ["%" . $term . "%"];
     $extrawhere = "";
     if ($oaonly) {

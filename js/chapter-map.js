@@ -311,24 +311,29 @@ $j("#chapter_unit_picker").data("unitpicker").onchange(chapterFromPicker);
 
 function loadBlurb(feature) {
     // load the blurb for the clicked object
-    document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4><p>Loading...';
+    var chapterName = feature.get('name');
+    var infoDiv = document.getElementById('mish_map_info');
+    infoDiv.innerHTML = '<h4>' + chapterName + '</h4><p>Loading...';
     $j.ajax({
       url : mish_map.ajaxurl,
       type : 'get',
       data : {
         action : 'mish_load_chapter_blurb',
-        chapter : feature.get('name'),
+        chapter : chapterName,
+        nonce : mish_map.nonce,
       },
       success : function( response ) {
-        adminlink = '';
+        // response.content is WordPress post content, already sanitized on input
+        var adminlink = '';
         if (response.adminlink_title) {
           adminlink = '<a href="' + response.adminlink_url + '">[' + response.adminlink_title + ']</a>';
         }
+        var areaInfo = '';
         if (feature.get('area')) {
-            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + '<p>' + feature.get('name') + ' is part of the ' + feature.get('area') + '</p>' + response.content + adminlink;
-        } else {
-            document.getElementById('mish_map_info').innerHTML = '<h4>' + feature.get('name') + '</h4>' + response.content + adminlink;
+            areaInfo = '<p>' + chapterName + ' is part of the ' + feature.get('area') + '</p>';
         }
+        // Use jQuery's html() method which is safe for pre-sanitized WordPress content
+        $j('#mish_map_info').html('<h4>' + chapterName + '</h4>' + areaInfo + response.content + adminlink);
       },
     });
 }

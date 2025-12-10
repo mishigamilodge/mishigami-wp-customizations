@@ -39,6 +39,7 @@ function mish_chapter_map() {
         'imagedir' => plugins_url('img/', dirname(__FILE__)),
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'cachedate' => $cachedate,
+        'nonce' => wp_create_nonce( 'mish_load_chapter_blurb_nonce' ),
     ) );
 
     ob_start();
@@ -77,21 +78,22 @@ function mish_chapter_map() {
 add_action( 'wp_ajax_mish_load_chapter_blurb', 'mish_load_chapter_blurb' );
 add_action( 'wp_ajax_nopriv_mish_load_chapter_blurb', 'mish_load_chapter_blurb' ); // need this to serve non logged in users
 function mish_load_chapter_blurb() {
-    $chapter = $_GET['chapter'];
+    check_ajax_referer( 'mish_load_chapter_blurb_nonce', 'nonce' );
+    $chapter = isset( $_GET['chapter'] ) ? sanitize_text_field( $_GET['chapter'] ) : '';
     $response = [];
     $posts = get_posts(array('title' => $chapter, 'post_type' => 'mish_chapter'));
     if (count($posts) == 0) {
         $response['content'] = '<p>We hope to have more information about this chapter here soon. In the meantime, please contact your chapter chief for information. If you are the chapter chief for this chapter, please contact the lodge secretary to change the content displayed here.</p>';
         if (current_user_can('manage_options')) {
             $response['adminlink_title'] = 'Create Blurb';
-            $response['adminlink_url'] = site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&amp;post_title=' . esc_attr($chapter);
+            $response['adminlink_url'] = esc_url( site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&post_title=' . urlencode($chapter) );
         }
     } else {
         $content = apply_filters( 'the_content', $posts[0]->post_content );
-        $response['content'] = $content;
+        $response['content'] = wp_kses_post( $content );
         if (current_user_can('manage_options')) {
             $response['adminlink_title'] = 'Edit Blurb';
-            $response['adminlink_url'] = site_url() . '/wp-admin/post.php?post=' . $posts[0]->ID . '&amp;action=edit';
+            $response['adminlink_url'] = esc_url( site_url() . '/wp-admin/post.php?post=' . $posts[0]->ID . '&action=edit' );
         }
     }
     wp_send_json($response);

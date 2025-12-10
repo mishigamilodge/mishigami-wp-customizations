@@ -84,6 +84,10 @@ function mish_config_units() {
     // =========================
 
     if (isset($_FILES['oa_unit_file'])) {
+        // Verify nonce for security
+        if (!isset($_POST['mish_upload_units_nonce_field']) || !wp_verify_nonce($_POST['mish_upload_units_nonce_field'], 'mish_upload_units_nonce')) {
+            wp_die(__('Security check failed'));
+        }
         if (preg_match('/\.xlsx$/', $_FILES['oa_unit_file']['name'])) {
             require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
 
@@ -373,6 +377,7 @@ function mish_config_units() {
 <h3>Import unit data from OALM</h3>
 <p>Export file from OALM Must use the <b>Units for export to website</b> view in the Units module.</p>
 <form action="" method="post" enctype="multipart/form-data">
+<?php wp_nonce_field( 'mish_upload_units_nonce', 'mish_upload_units_nonce_field' ); ?>
 <label for="oa_unit_file">Click Browse, then select the xlsx file exported from OALM's grid export, then click "Upload":</label><br>
 <input type="file" name="oa_unit_file" id="oa_unit_file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
 <input type="submit" class="button button-primary" name="submit" value="Upload"><br>

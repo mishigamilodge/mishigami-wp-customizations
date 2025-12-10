@@ -88,7 +88,14 @@ function mish_config_units() {
         if (!isset($_POST['mish_upload_units_nonce_field']) || !wp_verify_nonce($_POST['mish_upload_units_nonce_field'], 'mish_upload_units_nonce')) {
             wp_die(__('Security check failed'));
         }
-        if (preg_match('/\.xlsx$/', $_FILES['oa_unit_file']['name'])) {
+        // Validate file type by MIME type, not just extension
+        $allowed_mime_types = array(
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel'
+        );
+        $file_mime = mime_content_type($_FILES['oa_unit_file']['tmp_name']);
+        
+        if (preg_match('/\.xlsx$/', $_FILES['oa_unit_file']['name']) && in_array($file_mime, $allowed_mime_types)) {
             require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
 
             $objReader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
@@ -359,7 +366,7 @@ function mish_config_units() {
             }
             ?></div><?php
         } else {
-            ?><div class="error"><p><strong>Invalid file upload.</strong> Not an XLSX file.</p></div><?php
+            ?><div class="error"><p><strong>Invalid file upload.</strong> File must be a valid XLSX spreadsheet.</p></div><?php
         }
     }
 

@@ -23,8 +23,6 @@ $mish_db_version = 1;
 function mish_create_table($ddl)
 {
     global $wpdb;
-    // Escape the DDL statement for safe execution (it's from hardcoded schema definitions)
-    $ddl = $wpdb->esc_sql($ddl);
     $table = "";
     if (preg_match("/create table\s+`?(\w+)`?\s/i", $ddl, $match)) {
         $table = $match[1];
@@ -38,8 +36,9 @@ function mish_create_table($ddl)
         }
     }
     // if we get here it doesn't exist yet, so create it
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-    $wpdb->query($ddl);
+    // NOTE: $ddl is always a DDL string provided by the plugin, and not user input, so it's safe to use here.
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
+    $wpdb->query($wpdb->esc_sql($ddl));
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
         if ($tbl == $table) {
@@ -83,8 +82,8 @@ function mish_install()
   `district_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
     );";
-
     mish_create_table($sql);
+
     $sql = "CREATE TABLE `{$dbprefix}units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chapter_id` int(11) NOT NULL,

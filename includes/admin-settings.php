@@ -310,7 +310,7 @@ function mish_config_units() {
                     $refcount = 0;
                     foreach ($unittablelist as $table) {
                         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                        $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s",array($district_id, $unit_type, $unit_num, $unit_desig)));
+                        $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM %i WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s", $table, $district_id, $unit_type, $unit_num, $unit_desig));
                         if ($count > 0) {
                             echo "--> ** found " . esc_html($count) . " record(s) in " . esc_html($table) . ".<br>";
                             $refcount += $count;

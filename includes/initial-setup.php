@@ -52,6 +52,7 @@ function mish_install()
     // change it'll need update code (see below).
 
     if (!mish_table_exists("{$dbprefix}chapters")) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
         $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `oalm_chapter_name` varchar(120) CHARACTER SET utf8 NOT NULL,
@@ -63,6 +64,7 @@ function mish_install()
     }
 
     if (!mish_table_exists("{$dbprefix}districts")) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
         $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `district_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
@@ -71,6 +73,7 @@ function mish_install()
     }
     
     if (!mish_table_exists("{$dbprefix}units")) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
         $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chapter_id` int(11) NOT NULL,
@@ -86,9 +89,9 @@ function mish_install()
   UNIQUE KEY `troop_UNIQUE` (`district_id`,`unit_type`,`unit_num`,`unit_desig`),
   KEY `chapter_id_fkey_idx` (`chapter_id`),
   KEY `district_id_fkey_idx` (`district_id`),
-  CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES `{$dbprefix}chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES `{$dbprefix}districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-    );", "{$dbprefix}units"));
+  CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES %i (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES %i (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    );", "{$dbprefix}units", "{$dbprefix}chapters", "{$dbprefix}districts"));
     }
 
     //

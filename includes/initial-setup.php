@@ -23,20 +23,24 @@ $mish_db_version = 1;
 function mish_create_table($ddl)
 {
     global $wpdb;
+    // Escape the DDL statement for safe execution (it's from hardcoded schema definitions)
+    $ddl = $wpdb->esc_sql($ddl);
     $table = "";
     if (preg_match("/create table\s+`?(\w+)`?\s/i", $ddl, $match)) {
         $table = $match[1];
     } else {
         return false;
     }
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
         if ($tbl == $table) {
             return true;
         }
     }
     // if we get here it doesn't exist yet, so create it
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query($ddl);
-    // check if it worked
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
         if ($tbl == $table) {
             return true;

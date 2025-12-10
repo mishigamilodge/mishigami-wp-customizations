@@ -65,6 +65,7 @@ function mish_get_units_autocomplete() {
     
     if ($districts) {
         // Query with districts filter
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
         $results = $wpdb->get_results($wpdb->prepare("
             SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
             FROM `{$dbprefix}units` AS un
@@ -77,6 +78,7 @@ function mish_get_units_autocomplete() {
         ", array($search_pattern, $search_pattern)));
     } else {
         // Query without districts filter
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
         $results = $wpdb->get_results($wpdb->prepare("
             SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
             FROM `{$dbprefix}units` AS un

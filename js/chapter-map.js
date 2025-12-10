@@ -183,31 +183,57 @@ $j('#mish_map').data('map', map);
 layer_MishigamiAreas.once("change", function() {
     map = mish_map.map;
     layer = mish_map.arealayer;
-    mish_map.extent = layer.getSource().getExtent();
-    view = new ol.View({
-        extent: mish_map.extent,
-        showFullExtent: true,
-        padding: [10,10,25,10],
-        center: ol.extent.getCenter(mish_map.extent),
-        minZoom: 4,
-        maxZoom: 20,
-        zoom: 4,
-    });
-    map.getView().fit(mish_map.extent,{
-        size: map.getSize(),
-        padding: [10,10,25,10],
-        duration: 1500,
-        callback: function() {
-            map.setView(view);
-            view.fit(mish_map.extent,{
-                size: map.getSize(),
-                padding: [10,10,25,10],
+    var baseExtent = layer.getSource().getExtent();
+    mish_map.baseExtent = baseExtent;  // Store for later use
+    
+    // Add margin to the extent for scrolling constraint - this should be larger to account for padding
+    var extentWidth = baseExtent[2] - baseExtent[0];
+    var extentHeight = baseExtent[3] - baseExtent[1];
+    var marginX = extentWidth * 0.05;  // 5% margin to allow for padding
+    var marginY = extentHeight * 0.05;
+    mish_map.extent = [
+        baseExtent[0] - marginX,
+        baseExtent[1] - marginY * 2,  // larger bottom margin for attribution (minY ~10%)
+        baseExtent[2] + marginX,
+        baseExtent[3] + marginY 
+    ];
+    
+    oldView = map.getView();
+    map.once('postrender', function() {
+        oldView.fit(mish_map.extent, {
+            size: map.getSize(),
+            padding: [20, 20, 80, 20],  // top, right, bottom, left - larger bottom for attribution
+            duration: 1500,
+            easing: ol.easing.easeOut
+        });
+        setTimeout(function() {
+            // Recreate the view with the new extent constraint
+            var newView = new ol.View({
+                extent: mish_map.extent,
+                center: ol.extent.getCenter(mish_map.extent),
+                minZoom: 4,
+                maxZoom: 20,
+                zoom: 4, // start far out so the animation zooms IN
             });
-        }
+            map.setView(newView);
+        
+            // Fit to the base extent with padding for visual margins after first postrender so animation is seen
+                newView.fit(baseExtent, {
+                    size: map.getSize(),
+                    padding: [20, 20, 80, 20],  // top, right, bottom, left - larger bottom for attribution
+                    duration: 1500,
+                    easing: ol.easing.easeOut
+                });
+        }, 2500);
     });
 });
 
-$j('#mish_map_reset_map').on("click", function() {
+function resetMap() {
+    map = $j('#mish_map').data('map');
+    if (!map) {
+        return; // Exit if map isn't ready
+    }
+    
     setAreaVisible('none');
     layer_MishigamiAreas.setVisible(true);
     layer_MishigamiChapters.setVisible(false);
@@ -215,21 +241,37 @@ $j('#mish_map_reset_map').on("click", function() {
     $j("#arealayer").prop('checked',true);
     $j("#mish_map_info").html($j("#mish_map_info_default").html());
 
-    features = layer_MishigamiAreas.getSource().getFeatures();
+    var features = layer_MishigamiAreas.getSource().getFeatures();
     for (feature of features) {
         // unhide it
         feature.setStyle(null);
     };
-    features = layer_MishigamiChapters.getSource().getFeatures();
-    for (feature of features) {
+    var chapters_features = layer_MishigamiChapters.getSource().getFeatures();
+    for (feature of chapters_features) {
         // unhide it
         feature.setStyle(null);
     };
+    
+    // Recreate the view with the extent constraint
+    // var newView = new ol.View({
+    //     extent: mish_map.extent,
+    //     center: ol.extent.getCenter(mish_map.extent),
+    //     minZoom: 4,
+    //     maxZoom: 20,
+    //     zoom: 4,
+    // });
+    // map.setView(newView);
+    
+    // Fit to the base extent with padding for visual margins
     map.getView().fit(mish_map.extent,{
         size: map.getSize(),
-        padding: [10,10,25,10],
+        padding: [20, 20, 80, 20],
         duration: 500
     });
+}
+
+$j('#mish_map_reset_map').on("click", function() {
+    resetMap();
     return true;
 });
 $j('#mish_map_show_layers').on("click", function() {

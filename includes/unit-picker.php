@@ -62,32 +62,64 @@ function mish_get_units_autocomplete() {
     // Build the LIKE pattern for searching
     $search_pattern = '%' . $search_term . '%';
     
-    if ($districts) {
-        // Query with districts filter
+    if ( $districts && $oaonly ) {
+        // Query with districts filter and OA only filter
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $results = $wpdb->get_results($wpdb->prepare("
-            SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-            FROM `{$dbprefix}units` AS un
-            LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-            LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
-            WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s" .
-            ($oaonly ? " AND un.unit_type IN('Troop', 'Ship', 'Crew')" : "") .
-            " OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
-            ORDER BY un.unit_num, un.unit_desig
-        ", array($search_pattern, $search_pattern)));
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+                FROM `{$dbprefix}units` AS un
+                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s AND un.unit_type IN('Troop', 'Ship', 'Crew')
+                OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
+                ORDER BY un.unit_num, un.unit_desig",
+                array( $search_pattern, $search_pattern )
+            )
+        );
+    } elseif ( $districts ) {
+        // Query with districts filter only
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+                FROM `{$dbprefix}units` AS un
+                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s
+                OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
+                ORDER BY un.unit_num, un.unit_desig",
+                array( $search_pattern, $search_pattern )
+            )
+        );
+    } elseif ( $oaonly ) {
+        // Query with OA only filter
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+                FROM `{$dbprefix}units` AS un
+                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                WHERE CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s AND un.unit_type IN('Troop', 'Ship', 'Crew')
+                ORDER BY un.unit_num, un.unit_desig",
+                array( $search_pattern )
+            )
+        );
     } else {
-        // Query without districts filter
+        // Query with no filters
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-        $results = $wpdb->get_results($wpdb->prepare("
-            SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-            FROM `{$dbprefix}units` AS un
-            LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-            LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
-            WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s" .
-            ($oaonly ? " AND un.unit_type IN('Troop', 'Ship', 'Crew')" : "") .
-            ")
-            ORDER BY un.unit_num, un.unit_desig
-        ", array($search_pattern)));
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+                FROM `{$dbprefix}units` AS un
+                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                WHERE CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s
+                ORDER BY un.unit_num, un.unit_desig",
+                array( $search_pattern )
+            )
+        );
     }
     
     wp_send_json($results);

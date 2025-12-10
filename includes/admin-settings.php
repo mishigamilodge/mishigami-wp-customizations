@@ -50,7 +50,7 @@ if (!function_exists('oa_tools_add_menu')) {
 
 # Apply custom CSS for admin pages
 function mish_enqueue_admin_custom_css() {
-    wp_enqueue_style( 'admin-custom', plugins_url('css/admin.css', dirname(__FILE__)));
+    wp_enqueue_style( 'admin-custom', plugins_url('css/admin.css', dirname(__FILE__)), array(), filemtime(dirname(__FILE__) . '/../css/admin.css'));
 }
 add_action( 'admin_enqueue_scripts', 'mish_enqueue_admin_custom_css' );
 
@@ -77,7 +77,7 @@ function mish_config_units() {
     $dbprefix = $wpdb->prefix . "mish_";
 
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));
     }
     // =========================
     // form processing code here
@@ -86,7 +86,7 @@ function mish_config_units() {
     if (isset($_FILES['oa_unit_file'])) {
         // Verify nonce for security
         if (!isset($_POST['mish_upload_units_nonce_field']) || !wp_verify_nonce($_POST['mish_upload_units_nonce_field'], 'mish_upload_units_nonce')) {
-            wp_die(__('Security check failed'));
+            wp_die(esc_html__('Security check failed', 'mishigami-custom'));
         }
         // Validate file type by MIME type, not just extension
         $allowed_mime_types = array(
@@ -152,7 +152,7 @@ function mish_config_units() {
                         }
                     }
                     if ($missingColumns) {
-                        ?><div class="error"><p><strong>Import failed.</strong></p><p>Missing required columns: <?php esc_html_e(implode(", ", $missingColumns)) ?></div><?php
+                        ?><div class="error"><p><strong>Import failed.</strong></p><p>Missing required columns: <?php echo esc_html(implode(", ", $missingColumns)); ?></p></div><?php
                     $complete = 1; # Don't show "may have failed" box at the bottom
                     break;
                     } else {
@@ -216,7 +216,7 @@ function mish_config_units() {
                         $unit_desig = $rowData['unit_desig'];
                         if ($unit_desig == "" && $unit_desig !== "") { $rowData['unit_desig'] = ""; }
                         if ($rowData['unit_desig'] != "") { $unit_desig = "-" . $rowData['unit_desig']; }
-                        echo "[+] Adding new unit: " . $district_name . " " . $rowData['unit_type'] . " " . $rowData['unit_num'] . $unit_desig . "\n";
+                        echo "[+] Adding new unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                         if ($wpdb->insert("{$dbprefix}units", $rowData, array('%d','%d','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'))) {
                             $insertrecordcount++;
                         }
@@ -229,7 +229,7 @@ function mish_config_units() {
                         if ($existing->unit_desig != $rowData['unit_desig']) {
                             # should only happen with "" -> "BT"
                             if ($updated == 0) {
-                                echo "### processing existing unit: " . $district_name . " " . $rowData['unit_type'] . " " . $rowData['unit_num'] . $unit_desig . "\n";
+                                echo "### processing existing unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                             }
                             echo "   => updating unit_desig from '' to 'BT'\n";
                             $wpdb->update("{$dbprefix}units", ['unit_desig' => $rowData['unit_desig']], ['id' => $existing->id], ["%s"], ["%d"]);
@@ -238,9 +238,9 @@ function mish_config_units() {
                         foreach ($editable_columns as $column) {
                             if ($existing->$column != $rowData[$column]) {
                                 if ($updated == 0) {
-                                    echo "### processing existing unit: " . $district_name . " " . $rowData['unit_type'] . " " . $rowData['unit_num'] . $unit_desig . "\n";
+                                    echo "### processing existing unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                                 }
-                                echo "   => updating " . $column . " from '" . $existing->$column . "' to '" . $rowData[$column] . "'\n";
+                                echo "   => updating " . esc_html($column) . " from '" . esc_html($existing->$column) . "' to '" . esc_html($rowData[$column]) . "'\n";
                                 $wpdb->update("{$dbprefix}units", [$column => $rowData[$column]], ['id' => $existing->id], ["%s"], ["%d"]);
                                 $updated++;
                             }
@@ -282,13 +282,13 @@ function mish_config_units() {
                 $indexkey = $district_name . ":" . $unit_type . ":" . $unit_num . ":" . $unit_desig;
                 if (!in_array($indexkey, $sheetUnitIndex)) {
                     # if we get here, unit exists in database but not in the spreadsheet
-                    echo "[-] Unit to be removed: $district_name $unit_type $unit_num $unit_desig<br>";
+                    echo "[-] Unit to be removed: " . esc_html($district_name) . " " . esc_html($unit_type) . " " . esc_html($unit_num) . " " . esc_html($unit_desig) . "<br>";
                     echo "--> Checking for references....<br>";
                     $refcount = 0;
                     foreach ($unittablelist as $table) {
                         $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s",array($district_id, $unit_type, $unit_num, $unit_desig)));
                         if ($count > 0) {
-                            echo "--> ** found $count record(s) in $table.<br>";
+                            echo "--> ** found " . esc_html($count) . " record(s) in " . esc_html($table) . ".<br>";
                             $refcount += $count;
                         }
                     }
@@ -353,11 +353,11 @@ function mish_config_units() {
             #####################
 
             $output = ob_get_clean();
-            ?><div class="updated"><p><strong>Read <?php esc_html_e($row->getRowIndex() - 1) ?> records from file.<br>
-            Added <?php esc_html_e($insertrecordcount) ?> new units.<br>
-            Updated <?php esc_html_e($updaterecordcount) ?> existing units.<br>
-            Deleted <?php esc_html_e($deleterecordcount) ?> old units.<br>
-            Encountered <?php esc_html_e($alreadyexists) ?> units already in DB.</strong></p>
+            ?><div class="updated"><p><strong>Read <?php echo esc_html($row->getRowIndex() - 1); ?> records from file.<br>
+            Added <?php echo esc_html($insertrecordcount); ?> new units.<br>
+            Updated <?php echo esc_html($updaterecordcount); ?> existing units.<br>
+            Deleted <?php echo esc_html($deleterecordcount); ?> old units.<br>
+            Encountered <?php echo esc_html($alreadyexists); ?> units already in DB.</strong></p>
             <?php
             if ($output) {
                 ?><p>Detail follows:</p>
@@ -397,7 +397,7 @@ function mish_config_chapters() {
     $dbprefix = $wpdb->prefix . "mish_";
 
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));
     }
     ?><div class="wrap">
     <h2>Manage Chapter List</h2>
@@ -409,11 +409,11 @@ function mish_config_chapters() {
         ?><tr><?php
         foreach ($chapter as $key => $value) {
             if ($key != 'id') {
-                ?><td id="<?php echo htmlspecialchars($key . "-" . $chapter->id); ?>"><?php echo htmlspecialchars($value); ?></td><?php
+                ?><td id="<?php echo esc_attr($key . "-" . $chapter->id); ?>"><?php echo esc_html($value); ?></td><?php
             }
         }
         ?><td>
-            <a href="javascript:alert('Not implemented yet.');">Edit</a>
+            <a href="javascript:alert('<?php echo esc_js(__('Not implemented yet.', 'mishigami-custom')); ?>');">Edit</a>
         </td></tr><?php
     }
     ?></tbody></table>

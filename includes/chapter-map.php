@@ -20,25 +20,22 @@
 add_shortcode( 'mish_chapter_map', 'mish_chapter_map' );
 function mish_chapter_map() {
     global $mish_openlayers;
-    # bump this number any time you update map-related js files to make sure the
-    # old version isn't cached in the browser
-    $cachedate = '20250101';
-    wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)));
-    wp_enqueue_style( 'mish-openlayers-css', plugins_url($mish_openlayers . '/ol.css', dirname(__FILE__)));
-    wp_enqueue_script( 'openlayer', plugins_url($mish_openlayers . '/ol.js', dirname(__FILE__)), false, false, true );
-    wp_enqueue_script( 'mish-map-schooldists-style', plugins_url("map-resources/styles/MILPSchoolDistricts_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-districts-style', plugins_url("map-resources/styles/MCCDistricts_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-divisions-style', plugins_url("map-resources/styles/MCCDivisions_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-counties-style', plugins_url("map-resources/styles/MILPCounties_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-chapters-style', plugins_url("map-resources/styles/MishigamiChapters_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-areas-style', plugins_url("map-resources/styles/MishigamiAreas_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-camps-style', plugins_url("map-resources/styles/MCCCamps_style.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer' ), false, true );
-    wp_enqueue_script( 'mish-map-js', plugins_url("js/chapter-map.js?v=$cachedate", dirname(__FILE__)), array( 'openlayer', 'jquery' ), false, true );
+    wp_enqueue_style( 'mish-map', plugins_url('css/chapter-map.css', dirname(__FILE__)), array(), filemtime(dirname(__FILE__) . '/../css/chapter-map.css'));
+    wp_enqueue_style( 'mish-openlayers-css', plugins_url($mish_openlayers . '/ol.css', dirname(__FILE__)), array(), filemtime(dirname(__FILE__) . '/../' . $mish_openlayers . '/ol.css'));
+    wp_enqueue_script( 'openlayer', plugins_url($mish_openlayers . '/ol.js', dirname(__FILE__)), false, filemtime(dirname(__FILE__) . '/../' . $mish_openlayers . '/ol.js'), true );
+    wp_enqueue_script( 'mish-map-schooldists-style', plugins_url("map-resources/styles/MILPSchoolDistricts_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MILPSchoolDistricts_style.js'), true );
+    wp_enqueue_script( 'mish-map-districts-style', plugins_url("map-resources/styles/MCCDistricts_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MCCDistricts_style.js'), true );
+    wp_enqueue_script( 'mish-map-divisions-style', plugins_url("map-resources/styles/MCCDivisions_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MCCDivisions_style.js'), true );
+    wp_enqueue_script( 'mish-map-counties-style', plugins_url("map-resources/styles/MILPCounties_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MILPCounties_style.js'), true );
+    wp_enqueue_script( 'mish-map-chapters-style', plugins_url("map-resources/styles/MishigamiChapters_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MishigamiChapters_style.js'), true );
+    wp_enqueue_script( 'mish-map-areas-style', plugins_url("map-resources/styles/MishigamiAreas_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MishigamiAreas_style.js'), true );
+    wp_enqueue_script( 'mish-map-camps-style', plugins_url("map-resources/styles/MCCCamps_style.js", dirname(__FILE__)), array( 'openlayer' ), filemtime(dirname(__FILE__) . '/../map-resources/styles/MCCCamps_style.js'), true );
+    wp_enqueue_script( 'mish-map-js', plugins_url("js/chapter-map.js", dirname(__FILE__)), array( 'openlayer', 'jquery' ), filemtime(dirname(__FILE__) . '/../js/chapter-map.js'), true );
     wp_localize_script( 'mish-map-js', 'mish_map', array(
         'layersdir' => plugins_url('map-resources/layers/', dirname(__FILE__)),
         'imagedir' => plugins_url('img/', dirname(__FILE__)),
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
-        'cachedate' => $cachedate,
+        'cachedate' => filemtime(dirname(__FILE__) . '/../map-resources/layers/MishigamiChapters.geojson'),
         'nonce' => wp_create_nonce( 'mish_load_chapter_blurb_nonce' ),
     ) );
 
@@ -83,16 +80,16 @@ function mish_load_chapter_blurb() {
     $response = [];
     $posts = get_posts(array('title' => $chapter, 'post_type' => 'mish_chapter'));
     if (count($posts) == 0) {
-        $response['content'] = '<p>We hope to have more information about this chapter here soon. In the meantime, please contact your chapter chief for information. If you are the chapter chief for this chapter, please contact the lodge secretary to change the content displayed here.</p>';
+        $response['content'] = '<p>' . __('We hope to have more information about this chapter here soon. In the meantime, please contact your chapter chief for information. If you are the chapter chief for this chapter, please contact the lodge secretary to change the content displayed here.', 'mishigami-custom') . '</p>';
         if (current_user_can('manage_options')) {
-            $response['adminlink_title'] = 'Create Blurb';
+            $response['adminlink_title'] = __('Create Blurb', 'mishigami-custom');
             $response['adminlink_url'] = esc_url( site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&post_title=' . urlencode($chapter) );
         }
     } else {
         $content = apply_filters( 'the_content', $posts[0]->post_content );
         $response['content'] = wp_kses_post( $content );
         if (current_user_can('manage_options')) {
-            $response['adminlink_title'] = 'Edit Blurb';
+            $response['adminlink_title'] = __('Edit Blurb', 'mishigami-custom');
             $response['adminlink_url'] = esc_url( site_url() . '/wp-admin/post.php?post=' . $posts[0]->ID . '&action=edit' );
         }
     }
@@ -157,7 +154,7 @@ shortcode to pull that from your chapter's google calendar).</p>
     get_current_screen()->add_help_tab(
         array(
             'id'      => 'overview',
-            'title'   => __( 'Overview' ),
+            'title'   => __( 'Overview', 'mishigami-custom' ),
             'content' => $description,
         )
     );

@@ -47,6 +47,10 @@ function mish_get_units_autocomplete() {
     global $wpdb;
     $dbprefix = $wpdb->prefix . "mish_";
     $term = isset( $_GET['term'] ) ? sanitize_text_field( $_GET['term'] ) : '';
+    // Limit term length to prevent abuse
+    if (strlen($term) > 100) {
+        $term = substr($term, 0, 100);
+    }
     $oaonly = isset( $_GET['oaonly'] ) ? intval( $_GET['oaonly'] ) : 0;
     $districts = isset( $_GET['districts'] ) ? intval( $_GET['districts'] ) : 0;
     $replacements = ["%" . $term . "%"];

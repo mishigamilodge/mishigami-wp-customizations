@@ -25,7 +25,7 @@ class OAUnitPicker {
         );
         $j("#" + id + "_unit_search").data("unitpicker", this);
         $j("#" + id + "_unit_search").autocomplete({
-            source: mish.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0") + '&districts=' + (this.include_districts ? "1" : "0") + '&nonce=' + encodeURIComponent(mish.nonce),
+            source: mish.ajaxurl + '?action=mish_get_units_autocomplete&oaonly=' + (this.oa_units_only ? "1" : "0") + '&districts=' + (this.include_districts ? "1" : "0"),
             select: function( event, ui ) {
                 let id = event.target.id;
                 let picker_id = id.replace(/_unit_search$/, "");

@@ -74,7 +74,7 @@ function mish_tools_page() {
 }
 function mish_config_units() {
     global $wpdb;
-    $dbprefix = $wpdb->prefix . "mish_";
+    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
 
     if (!current_user_can('manage_options')) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));
@@ -127,8 +127,8 @@ function mish_config_units() {
             $deleterecordcount = 0;
             $alreadyexists = 0;
             $error_output = "";
-            $districts = $wpdb->get_results($wpdb->prepare("SELECT district_name, id FROM {$dbprefix}districts"));
-            $chapters = $wpdb->get_results($wpdb->prepare("SELECT oalm_chapter_name, id FROM {$dbprefix}chapters"));
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT district_name, id FROM `{$dbprefix}districts`"));
+            $chapters = $wpdb->get_results($wpdb->prepare("SELECT oalm_chapter_name, id FROM `{$dbprefix}chapters`"));
 
             foreach ($objWorksheet->getRowIterator() as $row) {
                 $rowData = array();
@@ -180,7 +180,7 @@ function mish_config_units() {
                                     'oalm_chapter_name' => $chapter_name,
                                     'chapter_name' => $human_chapter_name
                                 ], [ '%s', '%s' ]);
-                                $chapter_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$dbprefix}chapters WHERE oalm_chapter_name = %s", $chapter_name));
+                                $chapter_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$dbprefix}chapters` WHERE oalm_chapter_name = %s", $chapter_name));
                                 $chapters[$chapter_name] = (object) ["oalm_chapter_name" => $chapter_name, "id" => $chapter_id];
                             }
                             $chapter_row = $chapters[$chapter_name];
@@ -192,7 +192,7 @@ function mish_config_units() {
                             if (empty($districts[$district_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
                                 $wpdb->insert("{$dbprefix}districts", [ 'district_name' => $district_name ], [ '%s' ]);
-                                $district_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$dbprefix}districts WHERE district_name = %s", $district_name));
+                                $district_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM `{$dbprefix}districts` WHERE district_name = %s", $district_name));
                                 $districts[$district_name] = (object) ["oalm_district_name" => $district_name, "id" => $district_id];
                             }
                             $district_row = $districts[$district_name];
@@ -204,12 +204,12 @@ function mish_config_units() {
                             $rowData[$columnMap[$columnName]] = $value;
                         }
                     }
-                    $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$dbprefix}units WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s", $rowData['district_id'], $rowData['unit_type'], $rowData['unit_num'], $rowData['unit_desig']));
+                    $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM `{$dbprefix}units` WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s", $rowData['district_id'], $rowData['unit_type'], $rowData['unit_num'], $rowData['unit_desig']));
                     if ((null === $existing) && ($rowData['unit_desig'] == "BT")) {
                         # if the unit is designated Boy Troop but we didn't
                         # get a match, look it up again without a designator
                         # since all undesignated troops used to be boy troops.
-                        $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$dbprefix}units WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s", $rowData['district_id'], $rowData['unit_type'], $rowData['unit_num'], ""));
+                        $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM `{$dbprefix}units` WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s", $rowData['district_id'], $rowData['unit_type'], $rowData['unit_num'], ""));
                     }
                     if (null === $existing) {
                         # still didn't get a match, it's a new unit
@@ -217,7 +217,7 @@ function mish_config_units() {
                         if ($unit_desig == "" && $unit_desig !== "") { $rowData['unit_desig'] = ""; }
                         if ($rowData['unit_desig'] != "") { $unit_desig = "-" . $rowData['unit_desig']; }
                         echo "[+] Adding new unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
-                        if ($wpdb->insert("{$dbprefix}units", $rowData, array('%d','%d','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'))) {
+                        if ($wpdb->insert("`{$dbprefix}units`", $rowData, array('%d','%d','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'))) {
                             $insertrecordcount++;
                         }
                     } else {
@@ -232,7 +232,7 @@ function mish_config_units() {
                                 echo "### processing existing unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                             }
                             echo "   => updating unit_desig from '' to 'BT'\n";
-                            $wpdb->update("{$dbprefix}units", ['unit_desig' => $rowData['unit_desig']], ['id' => $existing->id], ["%s"], ["%d"]);
+                            $wpdb->update("`{$dbprefix}units`", ['unit_desig' => $rowData['unit_desig']], ['id' => $existing->id], ["%s"], ["%d"]);
                             $updated++;
                         }
                         foreach ($editable_columns as $column) {
@@ -241,7 +241,7 @@ function mish_config_units() {
                                     echo "### processing existing unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                                 }
                                 echo "   => updating " . esc_html($column) . " from '" . esc_html($existing->$column) . "' to '" . esc_html($rowData[$column]) . "'\n";
-                                $wpdb->update("{$dbprefix}units", [$column => $rowData[$column]], ['id' => $existing->id], ["%s"], ["%d"]);
+                                $wpdb->update("`{$dbprefix}units`", [$column => $rowData[$column]], ['id' => $existing->id], ["%s"], ["%d"]);
                                 $updated++;
                             }
                         }
@@ -270,8 +270,8 @@ function mish_config_units() {
             }
 
             # Grab a list of units from the database
-            $units = $wpdb->get_results($wpdb->prepare("SELECT district_id, unit_type, unit_num, unit_desig FROM {$dbprefix}units"), ARRAY_A);
-            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM {$dbprefix}districts"), OBJECT_K);
+            $units = $wpdb->get_results($wpdb->prepare("SELECT district_id, unit_type, unit_num, unit_desig FROM `{$dbprefix}units`"), ARRAY_A);
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM `{$dbprefix}districts`"), OBJECT_K);
             foreach ($units as $unit) {
                 $district_id = $unit['district_id'];
                 $district_row = $districts[$district_id];
@@ -294,7 +294,7 @@ function mish_config_units() {
                     }
                     if ($refcount == 0) {
                         echo "**> No references found, Removing unit!<br>";
-                        $wpdb->query($wpdb->prepare("DELETE FROM {$dbprefix}units WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s",array($unit['district_id'], $unit_type, $unit_num, $unit_desig)));
+                        $wpdb->query($wpdb->prepare("DELETE FROM `{$dbprefix}units` WHERE district_id = %s AND unit_type = %s AND unit_num = %s AND unit_desig = %s",array($unit['district_id'], $unit_type, $unit_num, $unit_desig)));
                         $deleterecordcount += 1;
                     }
                     else {
@@ -320,7 +320,7 @@ function mish_config_units() {
                 ["{$dbprefix}units", "district_id"],
             );
 
-            $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name FROM {$dbprefix}chapters"), ARRAY_A);
+            $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name FROM `{$dbprefix}chapters`"), ARRAY_A);
             foreach ($chapters as $chapter) {
                 $refcount = 0;
                 foreach ($chapterreferences as $ref) {
@@ -331,12 +331,12 @@ function mish_config_units() {
                 }
                 if ($refcount == 0) {
                     echo "## deleting unused chapter " . esc_html($chapter['oalm_chapter_name']) . "<br>";
-                    $wpdb->query($wpdb->prepare("DELETE FROM {$dbprefix}chapters WHERE id = %s", array($chapter['id'])));
+                    $wpdb->query($wpdb->prepare("DELETE FROM `{$dbprefix}chapters` WHERE id = %s", array($chapter['id'])));
                 }
 
             }
 
-            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM {$dbprefix}districts"), ARRAY_A);
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM `{$dbprefix}districts`"), ARRAY_A);
             foreach ($districts as $district) {
                 $refcount = 0;
                 foreach ($districtreferences as $ref) {
@@ -347,7 +347,7 @@ function mish_config_units() {
                 }
                 if ($refcount == 0) {
                     echo "## deleting unused district " . esc_html($district['district_name']) . "<br>";
-                    $wpdb->query($wpdb->prepare("DELETE FROM {$dbprefix}districts WHERE id = %s", array($district['id'])));
+                    $wpdb->query($wpdb->prepare("DELETE FROM `{$dbprefix}districts` WHERE id = %s", array($district['id'])));
                 }
 
             }
@@ -378,7 +378,7 @@ function mish_config_units() {
     // screens and forms start here
     // ============================
 
-    $unit_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$dbprefix}units"));
+    $unit_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM `{$dbprefix}units`"));
     ?>
 <div class="wrap">
 <h2>Update Unit List</h2>
@@ -398,7 +398,7 @@ function mish_config_units() {
 }
 function mish_config_chapters() {
     global $wpdb;
-    $dbprefix = $wpdb->prefix . "mish_";
+    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
 
     if (!current_user_can('manage_options')) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));
@@ -408,7 +408,7 @@ function mish_config_chapters() {
     <p>New chapters are automatically added when found during Unit import, and unused chapters are automatically removed. Additional fields that aren't part of the import from LodgeMaster can be edited here.</p>
     <table class="widefat striped"><thead><tr><th>OALM Name</th><th>Human Readable Name</th><th>Chief Email</th><th>Adviser Email</th><th>Actions</th></tr></thead><tbody>
     <?php
-    $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM {$dbprefix}chapters ORDER BY oalm_chapter_name"), OBJECT_K);
+    $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM `{$dbprefix}chapters` ORDER BY oalm_chapter_name"), OBJECT_K);
     foreach ($chapters as $chapter) {
         ?><tr><?php
         foreach ($chapter as $key => $value) {

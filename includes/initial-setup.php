@@ -53,7 +53,7 @@ function mish_install()
     global $wpdb;
     global $mish_db_version;
 
-    $dbprefix = $wpdb->prefix . "mish_";
+    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
 
     //
     // CREATE THE TABLES IF THEY DON'T EXIST

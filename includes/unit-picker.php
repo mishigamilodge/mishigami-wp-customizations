@@ -45,37 +45,49 @@ add_action( 'wp_ajax_nopriv_mish_get_units_autocomplete', 'mish_get_units_autoco
 function mish_get_units_autocomplete() {
     check_ajax_referer( 'mish_get_units_autocomplete_nonce', 'nonce' );
     global $wpdb;
-    $dbprefix = $wpdb->prefix . "mish_";
-    // Use wp_unslash and sanitize_text_field for the search term
-    $term = isset( $_GET['term'] ) ? wp_unslash( sanitize_text_field( $_GET['term'] ) ) : '';
+    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
+    
+    // Sanitize the search term
+    $raw_term = isset( $_GET['term'] ) ? wp_unslash( $_GET['term'] ) : '';
+    $term = sanitize_text_field($raw_term);
     // Limit term length to prevent abuse
     if (strlen($term) > 100) {
         $term = substr($term, 0, 100);
     }
+    // Escape for LIKE clause
+    $search_term = $wpdb->esc_like($term);
+    
     $oaonly = isset( $_GET['oaonly'] ) ? intval( $_GET['oaonly'] ) : 0;
     $districts = isset( $_GET['districts'] ) ? intval( $_GET['districts'] ) : 0;
-    $replacements = ["%" . $term . "%"];
-    $extrawhere = "";
-    if ($oaonly) {
-        $extrawhere .= " AND unit_type IN('Troop', 'Ship', 'Crew')";
-    }
-    $extrawhere2 = "";
+    
+    // Build the LIKE pattern for searching
+    $search_pattern = '%' . $search_term . '%';
+    
     if ($districts) {
-        $extrawhere2 .= " OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s)";
-        $replacements[] = "%" . $term . "%";
+        // Query with districts filter
+        $results = $wpdb->get_results($wpdb->prepare("
+            SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+            FROM `{$dbprefix}units` AS un
+            LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+            LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+            WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s" .
+            ($oaonly ? " AND un.unit_type IN('Troop', 'Ship', 'Crew')" : "") .
+            " OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
+            ORDER BY un.unit_num, un.unit_desig
+        ", array($search_pattern, $search_pattern)));
+    } else {
+        // Query without districts filter
+        $results = $wpdb->get_results($wpdb->prepare("
+            SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
+            FROM `{$dbprefix}units` AS un
+            LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
+            LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+            WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s" .
+            ($oaonly ? " AND un.unit_type IN('Troop', 'Ship', 'Crew')" : "") .
+            ")
+            ORDER BY un.unit_num, un.unit_desig
+        ", array($search_pattern)));
     }
-    // error_log("MISH DEBUG - extrawhere = $extrawhere");
-    // error_log("MISH DEBUG - extrawhere2 = $extrawhere2");
-    // error_log("MISH DEBUG - term = $term");
-    // error_log("MISH DEBUG - replacements = " . print_r($replacements, true));
-    $results = $wpdb->get_results($wpdb->prepare("
-        SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-        FROM {$dbprefix}units AS un
-        LEFT JOIN {$dbprefix}chapters AS ch ON un.chapter_id = ch.id
-        LEFT JOIN {$dbprefix}districts AS di ON un.district_id = di.id
-        WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s $extrawhere)
-        $extrawhere2
-        ORDER BY un.unit_num, un.unit_desig
-    ", $replacements));
+    
     wp_send_json($results);
 }

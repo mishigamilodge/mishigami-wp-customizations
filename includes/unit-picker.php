@@ -59,9 +59,9 @@ function mish_get_units_autocomplete() {
         $extrawhere2 .= " OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s)";
         $replacements[] = "%" . $term . "%";
     }
-    error_log("extrawhere = $extrawhere");
-    error_log("extrawhere2 = $extrawhere2");
-    error_log("replacements = " . print_r($replacements, true));
+    // error_log("extrawhere = $extrawhere");
+    // error_log("extrawhere2 = $extrawhere2");
+    // error_log("replacements = " . print_r($replacements, true));
     $results = $wpdb->get_results($wpdb->prepare("
         SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
         FROM {$dbprefix}units AS un

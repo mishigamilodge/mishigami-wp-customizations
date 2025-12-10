@@ -324,7 +324,9 @@ function mish_config_units() {
             foreach ($chapters as $chapter) {
                 $refcount = 0;
                 foreach ($chapterreferences as $ref) {
-                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`" . $ref[1] . "`) FROM `" . $ref[0] . "` WHERE `" . $ref[1] . "` = %s", array($chapter['id'])));
+                    $table = $ref[0];
+                    $column = $ref[1];
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(\`" . $wpdb->esc_like($column) . "\`) FROM \`" . $wpdb->esc_like($table) . "\` WHERE \`" . $wpdb->esc_like($column) . "\` = %s", array($chapter['id'])));
                     $refcount = $refcount + $matches;
                 }
                 if ($refcount == 0) {
@@ -338,7 +340,9 @@ function mish_config_units() {
             foreach ($districts as $district) {
                 $refcount = 0;
                 foreach ($districtreferences as $ref) {
-                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`" . $ref[1] . "`) FROM `" . $ref[0] . "` WHERE `" . $ref[1] . "` = %s", array($district['id'])));
+                    $table = $ref[0];
+                    $column = $ref[1];
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(\`" . $wpdb->esc_like($column) . "\`) FROM \`" . $wpdb->esc_like($table) . "\` WHERE \`" . $wpdb->esc_like($column) . "\` = %s", array($district['id'])));
                     $refcount = $refcount + $matches;
                 }
                 if ($refcount == 0) {

@@ -127,8 +127,8 @@ function mish_config_units() {
             $deleterecordcount = 0;
             $alreadyexists = 0;
             $error_output = "";
-            $districts = $wpdb->get_results("SELECT district_name, id FROM {$dbprefix}districts", OBJECT_K);
-            $chapters = $wpdb->get_results("SELECT oalm_chapter_name, id FROM {$dbprefix}chapters", OBJECT_K);
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT district_name, id FROM {$dbprefix}districts"));
+            $chapters = $wpdb->get_results($wpdb->prepare("SELECT oalm_chapter_name, id FROM {$dbprefix}chapters"));
 
             foreach ($objWorksheet->getRowIterator() as $row) {
                 $rowData = array();
@@ -270,8 +270,8 @@ function mish_config_units() {
             }
 
             # Grab a list of units from the database
-            $units = $wpdb->get_results("SELECT district_id, unit_type, unit_num, unit_desig FROM {$dbprefix}units", ARRAY_A);
-            $districts = $wpdb->get_results("SELECT id, district_name FROM {$dbprefix}districts", OBJECT_K);
+            $units = $wpdb->get_results($wpdb->prepare("SELECT district_id, unit_type, unit_num, unit_desig FROM {$dbprefix}units"), ARRAY_A);
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM {$dbprefix}districts"), OBJECT_K);
             foreach ($units as $unit) {
                 $district_id = $unit['district_id'];
                 $district_row = $districts[$district_id];
@@ -320,7 +320,7 @@ function mish_config_units() {
                 ["{$dbprefix}units", "district_id"],
             );
 
-            $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name FROM {$dbprefix}chapters", ARRAY_A);
+            $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name FROM {$dbprefix}chapters"), ARRAY_A);
             foreach ($chapters as $chapter) {
                 $refcount = 0;
                 foreach ($chapterreferences as $ref) {
@@ -334,7 +334,7 @@ function mish_config_units() {
 
             }
 
-            $districts = $wpdb->get_results("SELECT id, district_name FROM {$dbprefix}districts", ARRAY_A);
+            $districts = $wpdb->get_results($wpdb->prepare("SELECT id, district_name FROM {$dbprefix}districts"), ARRAY_A);
             foreach ($districts as $district) {
                 $refcount = 0;
                 foreach ($districtreferences as $ref) {
@@ -374,7 +374,7 @@ function mish_config_units() {
     // screens and forms start here
     // ============================
 
-    $unit_count = $wpdb->get_var("SELECT COUNT(*) FROM {$dbprefix}units");
+    $unit_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$dbprefix}units"));
     ?>
 <div class="wrap">
 <h2>Update Unit List</h2>
@@ -404,7 +404,7 @@ function mish_config_chapters() {
     <p>New chapters are automatically added when found during Unit import, and unused chapters are automatically removed. Additional fields that aren't part of the import from LodgeMaster can be edited here.</p>
     <table class="widefat striped"><thead><tr><th>OALM Name</th><th>Human Readable Name</th><th>Chief Email</th><th>Adviser Email</th><th>Actions</th></tr></thead><tbody>
     <?php
-    $chapters = $wpdb->get_results("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM {$dbprefix}chapters ORDER BY oalm_chapter_name", OBJECT_K);
+    $chapters = $wpdb->get_results($wpdb->prepare("SELECT id, oalm_chapter_name, chapter_name, chief_email, adviser_email FROM {$dbprefix}chapters ORDER BY oalm_chapter_name"), OBJECT_K);
     foreach ($chapters as $chapter) {
         ?><tr><?php
         foreach ($chapter as $key => $value) {

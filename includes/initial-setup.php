@@ -29,7 +29,7 @@ function mish_create_table($ddl)
     } else {
         return false;
     }
-    foreach ($wpdb->get_col("SHOW TABLES", 0) as $tbl) {
+    foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
         if ($tbl == $table) {
             return true;
         }
@@ -37,7 +37,7 @@ function mish_create_table($ddl)
     // if we get here it doesn't exist yet, so create it
     $wpdb->query($ddl);
     // check if it worked
-    foreach ($wpdb->get_col("SHOW TABLES", 0) as $tbl) {
+    foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
         if ($tbl == $table) {
             return true;
         }

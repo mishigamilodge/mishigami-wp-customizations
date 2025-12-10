@@ -361,7 +361,7 @@ function mish_config_units() {
             <?php
             if ($output) {
                 ?><p>Detail follows:</p>
-                <pre><?php echo $output ?></pre>
+                <pre><?php echo esc_html($output) ?></pre>
                 <?php
             }
             ?></div><?php

@@ -138,9 +138,17 @@ function mish_config_units() {
             $alreadyexists = 0;
             $error_output = "";
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            $districts = $wpdb->get_results($wpdb->prepare("SELECT district_name, id FROM %i", "{$dbprefix}districts"));
+            $districts_result = $wpdb->get_results($wpdb->prepare("SELECT district_name, id FROM %i", "{$dbprefix}districts"));
+            $districts = array();
+            foreach ($districts_result as $district) {
+                $districts[$district->district_name] = $district;
+            }
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            $chapters = $wpdb->get_results($wpdb->prepare("SELECT oalm_chapter_name, id FROM %i", "{$dbprefix}chapters"));
+            $chapters_result = $wpdb->get_results($wpdb->prepare("SELECT oalm_chapter_name, id FROM %i", "{$dbprefix}chapters"));
+            $chapters = array();
+            foreach ($chapters_result as $chapter) {
+                $chapters[$chapter->oalm_chapter_name] = $chapter;
+            }
 
             foreach ($objWorksheet->getRowIterator() as $row) {
                 $rowData = array();
@@ -184,17 +192,19 @@ function mish_config_units() {
                             # the data will have a name, we need the foreign key reference ID
                             $chapter_name = $cell->getValue();
                             if (!$chapter_name) { $chapter_name = ""; } # null -> empty string
-                            if (empty($chapters[$chapter_name])) {
+                            if (!isset($chapters[$chapter_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
                                 // take a guess at a human-readable name by cutting stuff before a leading hyphen
                                 $human_chapter_name = preg_replace('/^.*- /', '', $chapter_name);
                                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                                $wpdb->insert("{$dbprefix}chapters", [
+                                $insert_result = $wpdb->insert("{$dbprefix}chapters", [
                                     'oalm_chapter_name' => $chapter_name,
                                     'chapter_name' => $human_chapter_name
                                 ], [ '%s', '%s' ]);
+                                echo "DEBUG: Insert chapter '" . esc_html($chapter_name) . "' result: " . intval($insert_result) . " (last_error: " . esc_html($wpdb->last_error) . ")<br>";
                                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
                                 $chapter_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM %i WHERE oalm_chapter_name = %s", "{$dbprefix}chapters", $chapter_name));
+                                echo "DEBUG: Retrieved chapter ID: " . intval($chapter_id) . "<br>";
                                 $chapters[$chapter_name] = (object) ["oalm_chapter_name" => $chapter_name, "id" => $chapter_id];
                             }
                             $chapter_row = $chapters[$chapter_name];
@@ -203,12 +213,14 @@ function mish_config_units() {
                             # the data will have a name, we need the foreign key reference ID
                             $district_name = $cell->getValue();
                             if (!$district_name) { $district_name = ""; } # null -> empty string
-                            if (empty($districts[$district_name])) {
+                            if (!isset($districts[$district_name])) {
                                 // if it doesn't exist, create it, then fetch the newly created ID and add it to the list
                                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                                $wpdb->insert("{$dbprefix}districts", [ 'district_name' => $district_name ], [ '%s' ]);
+                                $insert_result = $wpdb->insert("{$dbprefix}districts", [ 'district_name' => $district_name ], [ '%s' ]);
+                                echo "DEBUG: Insert district '" . esc_html($district_name) . "' result: " . intval($insert_result) . " (last_error: " . esc_html($wpdb->last_error) . ")<br>";
                                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
                                 $district_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM %i WHERE district_name = %s", "{$dbprefix}districts", $district_name));
+                                echo "DEBUG: Retrieved district ID: " . intval($district_id) . "<br>";
                                 $districts[$district_name] = (object) ["oalm_district_name" => $district_name, "id" => $district_id];
                             }
                             $district_row = $districts[$district_name];
@@ -236,7 +248,7 @@ function mish_config_units() {
                         if ($rowData['unit_desig'] != "") { $unit_desig = "-" . $rowData['unit_desig']; }
                         echo "[+] Adding new unit: " . esc_html($district_name) . " " . esc_html($rowData['unit_type']) . " " . esc_html($rowData['unit_num']) . esc_html($unit_desig) . "\n";
                         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                        if ($wpdb->insert("`{$dbprefix}units`", $rowData, array('%d','%d','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'))) {
+                        if ($wpdb->insert("{$dbprefix}units", $rowData, array('%d','%d','%s','%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'))) {
                             $insertrecordcount++;
                         }
                     } else {
@@ -252,7 +264,7 @@ function mish_config_units() {
                             }
                             echo "   => updating unit_desig from '' to 'BT'\n";
                             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                            $wpdb->update("`{$dbprefix}units`", ['unit_desig' => $rowData['unit_desig']], ['id' => $existing->id], ["%s"], ["%d"]);
+                            $wpdb->update("{$dbprefix}units", ['unit_desig' => $rowData['unit_desig']], ['id' => $existing->id], ["%s"], ["%d"]);
                             $updated++;
                         }
                         foreach ($editable_columns as $column) {
@@ -262,7 +274,7 @@ function mish_config_units() {
                                 }
                                 echo "   => updating " . esc_html($column) . " from '" . esc_html($existing->$column) . "' to '" . esc_html($rowData[$column]) . "'\n";
                                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                                $wpdb->update("`{$dbprefix}units`", [$column => $rowData[$column]], ['id' => $existing->id], ["%s"], ["%d"]);
+                                $wpdb->update("{$dbprefix}units", [$column => $rowData[$column]], ['id' => $existing->id], ["%s"], ["%d"]);
                                 $updated++;
                             }
                         }
@@ -352,7 +364,7 @@ function mish_config_units() {
                 foreach ($chapterreferences as $ref) {
                     // Count references from units table to this chapter
                     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`chapter_id`) FROM %i WHERE `chapter_id` = %s", "{$dbprefix}units", $chapter['id']));
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(chapter_id) FROM %i WHERE chapter_id = %s", "{$dbprefix}units", $chapter['id']));
                     $refcount = $refcount + $matches;
                 }
                 if ($refcount == 0) {
@@ -370,7 +382,7 @@ function mish_config_units() {
                 foreach ($districtreferences as $ref) {
                     // Count references from units table to this district
                     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(`district_id`) FROM %i WHERE `district_id` = %s", "{$dbprefix}units", $district['id']));
+                    $matches = $wpdb->get_var($wpdb->prepare("SELECT COUNT(district_id) FROM %i WHERE district_id = %s", "{$dbprefix}units", $district['id']));
                     $refcount = $refcount + $matches;
                 }
                 if ($refcount == 0) {

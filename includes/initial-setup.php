@@ -20,28 +20,12 @@
 global $mish_db_version;
 $mish_db_version = 1;
 
-function mish_create_table($ddl)
+function mish_table_exists($table_name)
 {
     global $wpdb;
-    $table = "";
-    if (preg_match("/create table\s+`?(\w+)`?\s/i", $ddl, $match)) {
-        $table = $match[1];
-    } else {
-        return false;
-    }
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
-        if ($tbl == $table) {
-            return true;
-        }
-    }
-    // if we get here it doesn't exist yet, so create it
-    // NOTE: $ddl is always a DDL string provided by the plugin, and not user input, so it's safe to use here.
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
-    $wpdb->query(esc_sql($ddl));
-    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-    foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
-        if ($tbl == $table) {
+        if ($tbl == $table_name) {
             return true;
         }
     }
@@ -67,24 +51,27 @@ function mish_install()
     // only if it doesn't exist yet. If the columns or indexes need to
     // change it'll need update code (see below).
 
-    $sql = "CREATE TABLE `{$dbprefix}chapters` (
+    if (!mish_table_exists("{$dbprefix}chapters")) {
+        $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `oalm_chapter_name` varchar(120) CHARACTER SET utf8 NOT NULL,
   `chapter_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
   `chief_email` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `adviser_email` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-    );";
-    mish_create_table($sql);
+    );", "{$dbprefix}chapters"));
+    }
 
-    $sql = "CREATE TABLE `{$dbprefix}districts` (
+    if (!mish_table_exists("{$dbprefix}districts")) {
+        $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `district_name` varchar(120) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-    );";
-    mish_create_table($sql);
-
-    $sql = "CREATE TABLE `{$dbprefix}units` (
+    );", "{$dbprefix}districts"));
+    }
+    
+    if (!mish_table_exists("{$dbprefix}units")) {
+        $wpdb->query($wpdb->prepare("CREATE TABLE %i (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `chapter_id` int(11) NOT NULL,
   `district_id` int(11) NOT NULL,
@@ -101,8 +88,8 @@ function mish_install()
   KEY `district_id_fkey_idx` (`district_id`),
   CONSTRAINT `chapter_id_fkey` FOREIGN KEY (`chapter_id`) REFERENCES `{$dbprefix}chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `district_id_fkey` FOREIGN KEY (`district_id`) REFERENCES `{$dbprefix}districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-    );";
-    mish_create_table($sql);
+    );", "{$dbprefix}units"));
+    }
 
     //
     // DATABASE UPDATE CODE

@@ -76,7 +76,7 @@ add_action( 'wp_ajax_mish_load_chapter_blurb', 'mish_load_chapter_blurb' );
 add_action( 'wp_ajax_nopriv_mish_load_chapter_blurb', 'mish_load_chapter_blurb' ); // need this to serve non logged in users
 function mish_load_chapter_blurb() {
     check_ajax_referer( 'mish_load_chapter_blurb_nonce', 'nonce' );
-    $chapter = isset( $_GET['chapter'] ) ? sanitize_text_field( $_GET['chapter'] ) : '';
+    $chapter = isset( $_GET['chapter'] ) ? sanitize_text_field( wp_unslash( $_GET['chapter'] ) ) : '';
     $response = [];
     $posts = get_posts(array('title' => $chapter, 'post_type' => 'mish_chapter'));
     if (count($posts) == 0) {

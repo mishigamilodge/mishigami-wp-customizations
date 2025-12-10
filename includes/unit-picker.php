@@ -19,7 +19,7 @@
 
 add_action( 'wp_enqueue_scripts', 'mish_unit_autocomplete_loader' );
 function mish_unit_autocomplete_loader() {
-    $pageuri = $_SERVER['REQUEST_URI'];
+    $pageuri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
     if (in_array($pageuri, [
             '/chapters/',
             '/transfer/'
@@ -48,8 +48,7 @@ function mish_get_units_autocomplete() {
     $dbprefix = $wpdb->prefix . 'mish_';
     
     // Sanitize the search term
-    $raw_term = isset( $_GET['term'] ) ? wp_unslash( $_GET['term'] ) : '';
-    $term = sanitize_text_field($raw_term);
+    $term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
     // Limit term length to prevent abuse
     if (strlen($term) > 100) {
         $term = substr($term, 0, 100);

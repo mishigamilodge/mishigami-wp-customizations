@@ -86,6 +86,7 @@ function mish_load_chapter_blurb() {
             $response['adminlink_url'] = esc_url( site_url() . '/wp-admin/post-new.php?post_type=mish_chapter&post_title=' . urlencode($chapter) );
         }
     } else {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- 'the_content' is a core WordPress filter
         $content = apply_filters( 'the_content', $posts[0]->post_content );
         $response['content'] = wp_kses_post( $content );
         if (current_user_can('manage_options')) {

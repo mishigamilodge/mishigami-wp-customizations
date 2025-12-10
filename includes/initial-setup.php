@@ -38,7 +38,7 @@ function mish_create_table($ddl)
     // if we get here it doesn't exist yet, so create it
     // NOTE: $ddl is always a DDL string provided by the plugin, and not user input, so it's safe to use here.
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
-    $wpdb->query($wpdb->esc_sql($ddl));
+    $wpdb->query(esc_sql($ddl));
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
         if ($tbl == $table) {
@@ -56,7 +56,7 @@ function mish_install()
     global $wpdb;
     global $mish_db_version;
 
-    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
+    $dbprefix = $wpdb->prefix . 'mish_';
 
     //
     // CREATE THE TABLES IF THEY DON'T EXIST

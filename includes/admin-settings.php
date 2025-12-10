@@ -74,7 +74,7 @@ function mish_tools_page() {
 }
 function mish_config_units() {
     global $wpdb;
-    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
+    $dbprefix = $wpdb->prefix . 'mish_';
 
     if (!current_user_can('manage_options')) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));
@@ -418,7 +418,7 @@ function mish_config_units() {
 }
 function mish_config_chapters() {
     global $wpdb;
-    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
+    $dbprefix = $wpdb->prefix . 'mish_';
 
     if (!current_user_can('manage_options')) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mishigami-custom'));

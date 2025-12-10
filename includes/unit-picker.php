@@ -45,7 +45,7 @@ add_action( 'wp_ajax_nopriv_mish_get_units_autocomplete', 'mish_get_units_autoco
 function mish_get_units_autocomplete() {
     check_ajax_referer( 'mish_get_units_autocomplete_nonce', 'nonce' );
     global $wpdb;
-    $dbprefix = $wpdb->esc_sql($wpdb->prefix . "mish_");
+    $dbprefix = $wpdb->prefix . 'mish_';
     
     // Sanitize the search term
     $raw_term = isset( $_GET['term'] ) ? wp_unslash( $_GET['term'] ) : '';

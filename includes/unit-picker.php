@@ -68,13 +68,13 @@ function mish_get_units_autocomplete() {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-                FROM `{$dbprefix}units` AS un
-                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                FROM %i AS un
+                LEFT JOIN %i AS ch ON un.chapter_id = ch.id
+                LEFT JOIN %i AS di ON un.district_id = di.id
                 WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s AND un.unit_type IN('Troop', 'Ship', 'Crew')
                 OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
                 ORDER BY un.unit_num, un.unit_desig",
-                array( $search_pattern, $search_pattern )
+                "{$dbprefix}units", "{$dbprefix}chapters", "{$dbprefix}districts", $search_pattern, $search_pattern
             )
         );
     } elseif ( $districts ) {
@@ -83,13 +83,13 @@ function mish_get_units_autocomplete() {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-                FROM `{$dbprefix}units` AS un
-                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                FROM %i AS un
+                LEFT JOIN %i AS ch ON un.chapter_id = ch.id
+                LEFT JOIN %i AS di ON un.district_id = di.id
                 WHERE (CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s
                 OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s))
                 ORDER BY un.unit_num, un.unit_desig",
-                array( $search_pattern, $search_pattern )
+                "{$dbprefix}units", "{$dbprefix}chapters", "{$dbprefix}districts", $search_pattern, $search_pattern
             )
         );
     } elseif ( $oaonly ) {
@@ -98,12 +98,12 @@ function mish_get_units_autocomplete() {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-                FROM `{$dbprefix}units` AS un
-                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                FROM %i AS un
+                LEFT JOIN %i AS ch ON un.chapter_id = ch.id
+                LEFT JOIN %i AS di ON un.district_id = di.id
                 WHERE CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s AND un.unit_type IN('Troop', 'Ship', 'Crew')
                 ORDER BY un.unit_num, un.unit_desig",
-                array( $search_pattern )
+                "{$dbprefix}units", "{$dbprefix}chapters", "{$dbprefix}districts", $search_pattern
             )
         );
     } else {
@@ -112,12 +112,12 @@ function mish_get_units_autocomplete() {
         $results = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
-                FROM `{$dbprefix}units` AS un
-                LEFT JOIN `{$dbprefix}chapters` AS ch ON un.chapter_id = ch.id
-                LEFT JOIN `{$dbprefix}districts` AS di ON un.district_id = di.id
+                FROM %i AS un
+                LEFT JOIN %i AS ch ON un.chapter_id = ch.id
+                LEFT JOIN %i AS di ON un.district_id = di.id
                 WHERE CONCAT(un.unit_type, ' ', un.unit_num, ' ', un.unit_desig) LIKE %s
                 ORDER BY un.unit_num, un.unit_desig",
-                array( $search_pattern )
+                "{$dbprefix}units", "{$dbprefix}chapters", "{$dbprefix}districts", $search_pattern
             )
         );
     }

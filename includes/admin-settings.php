@@ -27,6 +27,7 @@
 
 if (!function_exists('oa_tools_add_menu')) {
     add_action( 'admin_menu', 'oa_tools_add_menu', 9 );
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- oa_tools_ is the prefix, it's a collection of plugsins, and that's why we check if it exists first before creating it.
     function oa_tools_add_menu() {
         $oa_tools_icon = file_get_contents("img/oa_trademark.svg", true);
         global $menu;
@@ -40,6 +41,7 @@ if (!function_exists('oa_tools_add_menu')) {
             add_menu_page( "OA Tools", "OA Tools", 'none', 'oa_tools', 'oa_tools_menu', 'data:image/svg+xml;base64,' . base64_encode($oa_tools_icon), 3 );
         }
     }
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- oa_tools_ is the prefix, it's a collection of plugsins, and that's why we check if it exists first before creating it.
     function oa_tools_menu() {
         # this is a no-op, the page can be blank. It's going to go to the first
         # submenu anyway when it's picked.

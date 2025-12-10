@@ -46,7 +46,8 @@ function mish_get_units_autocomplete() {
     check_ajax_referer( 'mish_get_units_autocomplete_nonce', 'nonce' );
     global $wpdb;
     $dbprefix = $wpdb->prefix . "mish_";
-    $term = isset( $_GET['term'] ) ? sanitize_text_field( $_GET['term'] ) : '';
+    // Use wp_unslash and sanitize_text_field for the search term
+    $term = isset( $_GET['term'] ) ? wp_unslash( sanitize_text_field( $_GET['term'] ) ) : '';
     // Limit term length to prevent abuse
     if (strlen($term) > 100) {
         $term = substr($term, 0, 100);
@@ -63,9 +64,10 @@ function mish_get_units_autocomplete() {
         $extrawhere2 .= " OR (un.unit_type IN('District','Council') AND di.district_name LIKE %s)";
         $replacements[] = "%" . $term . "%";
     }
-    // error_log("extrawhere = $extrawhere");
-    // error_log("extrawhere2 = $extrawhere2");
-    // error_log("replacements = " . print_r($replacements, true));
+    // error_log("MISH DEBUG - extrawhere = $extrawhere");
+    // error_log("MISH DEBUG - extrawhere2 = $extrawhere2");
+    // error_log("MISH DEBUG - term = $term");
+    // error_log("MISH DEBUG - replacements = " . print_r($replacements, true));
     $results = $wpdb->get_results($wpdb->prepare("
         SELECT unit_type, unit_num, unit_desig, chapter_name, oalm_chapter_name, district_name, unit_city, charter_org
         FROM {$dbprefix}units AS un

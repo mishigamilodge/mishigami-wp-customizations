@@ -32,7 +32,7 @@ function mish_create_table($ddl)
         return false;
     }
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-    foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
+    foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
         if ($tbl == $table) {
             return true;
         }
@@ -41,7 +41,7 @@ function mish_create_table($ddl)
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query($ddl);
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-    foreach ($wpdb->get_col($wpdb->prepare("SHOW TABLES")) as $tbl) {
+    foreach ($wpdb->get_col("SHOW TABLES") as $tbl) {
         if ($tbl == $table) {
             return true;
         }

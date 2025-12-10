@@ -1,6 +1,10 @@
 .ui-autocomplete-loading {
     background: url('https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif') no-repeat right center;
 }
+.ui-autocomplete li {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
 .ui-autocomplete .ui-menu-item:hover {
     font-weight: normal;
     background-color: #003eff;

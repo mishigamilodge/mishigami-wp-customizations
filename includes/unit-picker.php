@@ -24,13 +24,8 @@ function mish_unit_autocomplete_loader() {
             '/chapters/',
             '/transfer/'
         ])) {
-        $wp_scripts = wp_scripts();
         wp_enqueue_script( 'jquery-ui-autocomplete');
-        wp_enqueue_style('jquery-ui-css',
-                    'https://ajax.googleapis.com/ajax/libs/jqueryui/' . $wp_scripts->registered['jquery-ui-core']->ver . '/themes/smoothness/jquery-ui.css',
-                    false,
-                    $wp_scripts->registered['jquery-ui-core']->ver,
-                    false);
+        wp_enqueue_style( 'mish-jquery-ui-css', plugins_url('css/jquery-ui.min.css', dirname(__FILE__)), array(), filemtime(dirname(__FILE__) . '/../css/jquery-ui.min.css'));
         wp_enqueue_style( 'mish-unit-picker-css', plugins_url('css/unit-picker.css', dirname(__FILE__)), array(), filemtime(dirname(__FILE__) . '/../css/unit-picker.css'));
         wp_enqueue_script( 'mish-unit-picker', plugins_url('js/unit-picker.js', dirname(__FILE__)), array( 'jquery-ui-autocomplete' ), filemtime(dirname(__FILE__) . '/../js/unit-picker.js'), true );
         wp_localize_script( 'mish-unit-picker', 'mish', array(
